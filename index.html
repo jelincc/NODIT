@@ -7,29 +7,42 @@
 <meta name="description" content="Lambda256 Product Designer 채용 과제 — Nodit Console Overview 화면 개선 프로토타입">
 <style>
   :root{
-    --page-bg:#F3F5F4;
+    --page-bg:#F4F7F5;
     --page-surface:#FFFFFF;
-    --page-ink:#1B2422;
-    --page-muted:#5B6B65;
-    --page-border:#E3E8E6;
+    --page-ink:#0E1512;
+    --page-muted:#647169;
+    --page-border:#E7ECE9;
     --accent:#17D97F;
-    --accent-strong:#0B7A46;
+    --accent-strong:#0A7A46;
+    --accent-tint:#E8FAF1;
+    --shadow-card:0 1px 2px rgba(14,21,18,.04), 0 16px 40px -24px rgba(14,21,18,.16);
+    --shadow-card-hover:0 2px 4px rgba(14,21,18,.06), 0 20px 48px -20px rgba(14,21,18,.20);
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:10px;
   }
   @media (prefers-color-scheme: dark){
     :root{
-      --page-bg:#14181A;
-      --page-surface:#1B2020;
-      --page-ink:#E7ECEA;
-      --page-muted:#9AACA6;
-      --page-border:#2A3230;
+      --page-bg:#111513;
+      --page-surface:#1A211E;
+      --page-ink:#EDF3EF;
+      --page-muted:#93A39B;
+      --page-border:#28322D;
       --accent-strong:#3EF0A0;
+      --accent-tint:#132A20;
+      --shadow-card:0 1px 2px rgba(0,0,0,.3), 0 16px 40px -20px rgba(0,0,0,.55);
+      --shadow-card-hover:0 2px 4px rgba(0,0,0,.35), 0 20px 48px -16px rgba(0,0,0,.6);
     }
   }
   :root[data-theme="dark"]{
-    --page-bg:#14181A; --page-surface:#1B2020; --page-ink:#E7ECEA; --page-muted:#9AACA6; --page-border:#2A3230; --accent-strong:#3EF0A0;
+    --page-bg:#111513; --page-surface:#1A211E; --page-ink:#EDF3EF; --page-muted:#93A39B; --page-border:#28322D; --accent-strong:#3EF0A0; --accent-tint:#132A20;
+    --shadow-card:0 1px 2px rgba(0,0,0,.3), 0 16px 40px -20px rgba(0,0,0,.55);
+    --shadow-card-hover:0 2px 4px rgba(0,0,0,.35), 0 20px 48px -16px rgba(0,0,0,.6);
   }
   :root[data-theme="light"]{
-    --page-bg:#F3F5F4; --page-surface:#FFFFFF; --page-ink:#1B2422; --page-muted:#5B6B65; --page-border:#E3E8E6; --accent-strong:#0B7A46;
+    --page-bg:#F4F7F5; --page-surface:#FFFFFF; --page-ink:#0E1512; --page-muted:#647169; --page-border:#E7ECE9; --accent-strong:#0A7A46; --accent-tint:#E8FAF1;
+    --shadow-card:0 1px 2px rgba(14,21,18,.04), 0 16px 40px -24px rgba(14,21,18,.16);
+    --shadow-card-hover:0 2px 4px rgba(14,21,18,.06), 0 20px 48px -20px rgba(14,21,18,.20);
   }
 
   *{box-sizing:border-box;}
@@ -41,31 +54,37 @@
     -webkit-font-smoothing:antialiased;
   }
 
-  .page{max-width:1360px;margin:0 auto;padding:48px 32px 96px;}
+  .page{max-width:1360px;margin:0 auto;padding:64px 32px 120px;}
 
-  .masthead{margin-bottom:32px;}
+  .masthead{margin-bottom:40px;}
   .eyebrow{
-    font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-    color:var(--accent-strong);margin:0 0 10px;
+    font-size:13px;font-weight:700;letter-spacing:.02em;
+    color:var(--accent-strong);margin:0 0 14px;
+    display:inline-flex;align-items:center;gap:8px;background:var(--accent-tint);
+    padding:6px 14px 6px 10px;border-radius:999px;
   }
-  h1{font-size:28px;line-height:1.25;margin:0 0 12px;letter-spacing:-.01em;text-wrap:balance;}
-  .lede{font-size:15px;line-height:1.6;color:var(--page-muted);max-width:680px;margin:0;}
+  .eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;}
+  h1{font-size:36px;line-height:1.22;margin:0 0 14px;letter-spacing:-.02em;font-weight:800;text-wrap:balance;}
+  .lede{font-size:16px;line-height:1.65;color:var(--page-muted);max-width:640px;margin:0;}
 
   .changelog{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
-    background:var(--page-border);border:1px solid var(--page-border);border-radius:12px;
-    overflow:hidden;margin:28px 0 40px;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+    margin:32px 0 44px;
   }
-  .changelog div{background:var(--page-surface);padding:16px 18px;}
+  .changelog div{
+    background:var(--page-surface);padding:20px 20px 22px;border-radius:var(--radius-md);
+    box-shadow:var(--shadow-card);transition:box-shadow .2s ease,transform .2s ease;
+  }
+  .changelog div:hover{box-shadow:var(--shadow-card-hover);transform:translateY(-2px);}
   .changelog .num{
-    font-family:ui-monospace,"SF Mono","Cascadia Mono",monospace;
-    font-size:11px;color:var(--accent-strong);font-weight:700;letter-spacing:.04em;
+    display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:7px;
+    font-size:11px;background:var(--accent-tint);color:var(--accent-strong);font-weight:800;letter-spacing:.02em;
   }
-  .changelog p{margin:6px 0 0;font-size:13px;line-height:1.5;color:var(--page-ink);}
+  .changelog p{margin:12px 0 0;font-size:13.5px;line-height:1.55;color:var(--page-ink);font-weight:500;}
 
   .frame-scroll{overflow-x:auto;padding-bottom:8px;}
   .frame-label{
-    font-size:12px;color:var(--page-muted);margin:0 0 10px;font-weight:600;
+    font-size:13px;color:var(--page-muted);margin:0 0 12px;font-weight:600;
     display:flex;align-items:center;gap:8px;
   }
   .frame-label .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;}
@@ -90,24 +109,23 @@
     display:flex;
     background:var(--c-canvas);
     color:var(--c-ink);
-    border-radius:14px;
+    border-radius:22px;
     overflow:hidden;
-    border:1px solid var(--page-border);
-    box-shadow:0 30px 60px -30px rgba(0,0,0,.35);
+    box-shadow:0 40px 80px -32px rgba(0,0,0,.4);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   }
 
   /* Sidebar */
-  .sidebar{width:224px;flex:none;background:var(--c-sidebar);color:var(--c-sidebar-ink);padding:20px 14px;display:flex;flex-direction:column;gap:22px;}
+  .sidebar{width:228px;flex:none;background:var(--c-sidebar);color:var(--c-sidebar-ink);padding:22px 14px;display:flex;flex-direction:column;gap:24px;}
   .brand{display:flex;align-items:center;gap:9px;padding:0 6px;}
-  .brand .mark{width:22px;height:22px;border-radius:6px;background:var(--c-accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#062E1B;}
-  .brand .word{font-size:14px;font-weight:800;letter-spacing:.01em;color:#F2F6F4;}
-  .workspace{padding:8px 10px;border:1px solid #1E2624;border-radius:9px;font-size:12px;display:flex;align-items:center;justify-content:space-between;color:var(--c-sidebar-ink);}
+  .brand .mark{width:24px;height:24px;border-radius:8px;background:var(--c-accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#062E1B;}
+  .brand .word{font-size:14.5px;font-weight:800;letter-spacing:.01em;color:#F2F6F4;}
+  .workspace{padding:9px 12px;border:1px solid #1E2624;border-radius:12px;font-size:12px;display:flex;align-items:center;justify-content:space-between;color:var(--c-sidebar-ink);}
   .workspace .k{color:var(--c-sidebar-muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:2px;}
   .navgroup{display:flex;flex-direction:column;gap:2px;}
-  .navgroup .label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--c-sidebar-muted);padding:6px 10px 4px;font-weight:700;}
-  .navitem{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;font-size:13px;color:var(--c-sidebar-ink);}
-  .navitem.active{background:var(--c-sidebar-active);color:#EAFBF3;font-weight:600;}
+  .navgroup .label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--c-sidebar-muted);padding:8px 10px 4px;font-weight:700;}
+  .navitem{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;font-size:13px;color:var(--c-sidebar-ink);}
+  .navitem.active{background:var(--c-sidebar-active);color:#EAFBF3;font-weight:700;}
   .navitem .ic{width:13px;height:13px;border-radius:50%;background:currentColor;opacity:.4;flex:none;}
   .navitem.active .ic{opacity:1;background:var(--c-accent);}
   .navitem .beta{margin-left:auto;font-size:9px;font-weight:700;background:#1E2624;color:var(--c-sidebar-muted);padding:1px 5px;border-radius:4px;}
@@ -115,89 +133,138 @@
 
   /* Main */
   .main{flex:1;min-width:0;display:flex;flex-direction:column;}
-  .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--c-border);background:var(--c-bg);}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--c-border);background:var(--c-bg);}
   .crumb{font-size:12px;color:var(--c-muted);}
-  .topbar-right{display:flex;align-items:center;gap:14px;}
-  .btn-ghost{font-size:12px;color:var(--c-ink);border:1px solid var(--c-border);padding:6px 12px;border-radius:7px;font-weight:600;}
-  .avatar{width:26px;height:26px;border-radius:50%;background:#DCE4E1;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--c-muted);}
+  .topbar-right{display:flex;align-items:center;gap:16px;}
+  .btn-ghost{font-size:12.5px;color:var(--c-ink);border:1.5px solid var(--c-border);padding:7px 14px;border-radius:999px;font-weight:700;}
+  .avatar{width:28px;height:28px;border-radius:50%;background:var(--c-accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#06331F;}
 
-  .content{padding:24px 28px 32px;display:flex;flex-direction:column;gap:22px;}
-  .content h2{font-size:19px;margin:0;letter-spacing:-.01em;}
+  .content{padding:28px 32px 36px;display:flex;flex-direction:column;gap:24px;background:var(--c-canvas);}
+  .content h2{font-size:22px;margin:0;letter-spacing:-.015em;font-weight:800;}
 
   /* Stat strip */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
-  .stat{background:var(--c-bg);border:1px solid var(--c-border);border-radius:12px;padding:16px 18px;}
-  .stat .lbl{font-size:11px;color:var(--c-muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin:0 0 8px;}
-  .stat .val{font-family:ui-monospace,"SF Mono","Cascadia Mono",monospace;font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1;}
-  .stat .sub{font-size:12px;color:var(--c-muted);margin-top:6px;}
-  .chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;}
-  .chip.plan{background:#E9FBF3;color:var(--c-accent-ink);}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .stat{background:var(--c-bg);border-radius:16px;padding:18px 20px;box-shadow:0 1px 2px rgba(16,23,20,.04),0 10px 24px -18px rgba(16,23,20,.25);}
+  .stat .lbl{font-size:11px;color:var(--c-muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin:0 0 10px;}
+  .stat .val{font-family:ui-monospace,"SF Mono","Cascadia Mono",monospace;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.01em;}
+  .stat .sub{font-size:12px;color:var(--c-muted);margin-top:8px;}
+  .chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;}
+  .chip.plan{background:#E4FBEF;color:var(--c-accent-ink);}
   .chip.elastic{background:#EEF2F1;color:var(--c-muted);}
-  .track{height:6px;border-radius:99px;background:#EEF2F0;margin-top:10px;overflow:hidden;}
+  .track{height:7px;border-radius:99px;background:#EEF2F0;margin-top:12px;overflow:hidden;}
   .track > span{display:block;height:100%;border-radius:99px;background:var(--c-accent);}
 
   /* Grid columns */
   .grid{display:grid;grid-template-columns:1.65fr 1fr;gap:16px;align-items:start;}
   .col{display:flex;flex-direction:column;gap:16px;}
-  .card{background:var(--c-bg);border:1px solid var(--c-border);border-radius:12px;overflow:hidden;}
-  .card-h{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--c-border);}
-  .card-h h3{margin:0;font-size:14px;font-weight:700;}
+  .card{background:var(--c-bg);border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(16,23,20,.04),0 10px 24px -18px rgba(16,23,20,.25);}
+  .card-h{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--c-border);}
+  .card-h h3{margin:0;font-size:14.5px;font-weight:800;}
   .card-h .meta{font-size:12px;color:var(--c-muted);}
-  .card-b{padding:16px 18px;}
-  .link{font-size:12px;color:var(--c-accent-ink);font-weight:600;}
+  .card-b{padding:18px 20px;}
+  .link{font-size:12.5px;color:var(--c-accent-ink);font-weight:700;}
 
   /* Getting started */
   .checklist{display:flex;flex-direction:column;}
-  .step{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-top:1px solid var(--c-border);}
+  .step{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-top:1px solid var(--c-border);}
   .step:first-child{border-top:none;padding-top:2px;}
-  .step .box{width:19px;height:19px;border-radius:6px;flex:none;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+  .step .box{width:22px;height:22px;border-radius:8px;flex:none;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;}
   .step.done .box{background:var(--c-accent);color:#06331F;}
-  .step.todo .box{border:1.5px solid var(--c-border);color:transparent;}
-  .step .t{font-size:13px;font-weight:600;}
+  .step.todo .box{border:1.75px solid var(--c-border);color:transparent;}
+  .step .t{font-size:13.5px;font-weight:700;}
   .step.done .t{color:var(--c-muted);text-decoration:line-through;text-decoration-color:var(--c-border);}
-  .step .d{font-size:12px;color:var(--c-muted);margin-top:2px;}
-  .step .cta{margin-left:auto;font-size:12px;font-weight:700;color:#06331F;background:var(--c-accent);padding:6px 12px;border-radius:7px;white-space:nowrap;}
+  .step .d{font-size:12px;color:var(--c-muted);margin-top:3px;}
+  .step .cta{margin-left:auto;font-size:12px;font-weight:800;color:#06331F;background:var(--c-accent);padding:8px 14px;border-radius:999px;white-space:nowrap;}
 
   /* Projects table */
   table{width:100%;border-collapse:collapse;font-size:13px;}
-  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--c-muted);font-weight:700;padding:0 0 10px;}
-  td{padding:10px 0;border-top:1px solid var(--c-border);}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--c-muted);font-weight:700;padding:0 0 12px;}
+  td{padding:12px 0;border-top:1px solid var(--c-border);}
   td.num{font-family:ui-monospace,"SF Mono","Cascadia Mono",monospace;font-variant-numeric:tabular-nums;}
-  .proj-name{font-weight:600;display:flex;align-items:center;gap:8px;}
+  .proj-name{font-weight:700;display:flex;align-items:center;gap:8px;}
   .proj-name .sw{width:7px;height:7px;border-radius:50%;background:var(--c-accent);}
 
   /* Usage card */
   .usage-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .gauge-lbl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;}
-  .gauge-lbl .l{font-size:12px;color:var(--c-muted);font-weight:600;}
+  .gauge-lbl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+  .gauge-lbl .l{font-size:12.5px;color:var(--c-muted);font-weight:700;}
   .gauge-lbl .r{font-family:ui-monospace,monospace;font-size:12px;color:var(--c-muted);font-variant-numeric:tabular-nums;}
   .empty-mini{
-    border:1px dashed var(--c-border);border-radius:9px;padding:18px 14px;text-align:center;
+    border:1.5px dashed var(--c-border);border-radius:14px;padding:20px 16px;text-align:center;
     display:flex;flex-direction:column;align-items:center;gap:4px;
   }
   .empty-mini .ic{width:26px;height:26px;border-radius:50%;background:#EEF2F0;margin-bottom:2px;}
   .empty-mini .t{font-size:12px;font-weight:600;color:var(--c-ink);}
   .empty-mini .d{font-size:11px;color:var(--c-muted);line-height:1.4;}
 
-  .autoscale{display:flex;align-items:center;justify-content:space-between;padding-top:14px;margin-top:14px;border-top:1px solid var(--c-border);}
-  .autoscale .l{font-size:12px;font-weight:600;}
+  .autoscale{display:flex;align-items:center;justify-content:space-between;padding-top:16px;margin-top:16px;border-top:1px solid var(--c-border);}
+  .autoscale .l{font-size:12.5px;font-weight:700;}
   .autoscale .d{font-size:11px;color:var(--c-muted);}
   .toggle-off{font-size:11px;font-weight:700;color:var(--c-muted);background:#EEF2F0;padding:3px 9px;border-radius:999px;}
 
   /* Right rail */
-  .promo{background:linear-gradient(135deg,#0E1F17,#122A1F);border-radius:12px;padding:16px 18px;color:#E7F5EE;position:relative;overflow:hidden;}
+  .promo{background:linear-gradient(135deg,#0E1F17,#122A1F);border-radius:16px;padding:20px 22px;color:#E7F5EE;position:relative;overflow:hidden;}
   .promo .k{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-accent);}
-  .promo .t{font-size:14px;font-weight:700;margin:6px 0 4px;line-height:1.3;}
-  .promo .d{font-size:12px;color:#B7CFC4;line-height:1.5;margin:0 0 12px;}
-  .promo .cta{display:inline-flex;font-size:12px;font-weight:700;background:var(--c-accent);color:#06331F;padding:6px 12px;border-radius:7px;}
+  .promo .t{font-size:15px;font-weight:800;margin:8px 0 5px;line-height:1.3;letter-spacing:-.005em;}
+  .promo .d{font-size:12.5px;color:#B7CFC4;line-height:1.55;margin:0 0 14px;}
+  .promo .cta{display:inline-flex;font-size:12.5px;font-weight:800;background:var(--c-accent);color:#06331F;padding:9px 16px;border-radius:999px;}
 
-  .plan-feat{display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:12.5px;border-top:1px solid var(--c-border);}
+  .plan-feat{display:flex;align-items:center;justify-content:space-between;padding:9px 0;font-size:13px;border-top:1px solid var(--c-border);}
   .plan-feat:first-child{border-top:none;}
-  .plan-feat .v{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums;color:var(--c-muted);}
-  .btn-primary{width:100%;text-align:center;font-size:12.5px;font-weight:700;background:var(--c-ink);color:#fff;padding:9px;border-radius:8px;margin-top:12px;}
-  .btn-secondary{width:100%;text-align:center;font-size:12.5px;font-weight:700;border:1px solid var(--c-border);color:var(--c-ink);padding:9px;border-radius:8px;}
+  .plan-feat .v{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums;color:var(--c-muted);font-weight:600;}
+  .btn-primary{width:100%;text-align:center;font-size:13px;font-weight:800;background:var(--c-ink);color:#fff;padding:12px;border-radius:12px;margin-top:14px;}
+  .btn-secondary{width:100%;text-align:center;font-size:13px;font-weight:800;border:1.5px solid var(--c-border);color:var(--c-ink);padding:12px;border-radius:12px;}
 
   .footnote{font-size:12px;color:var(--page-muted);margin-top:18px;line-height:1.6;max-width:760px;}
+
+  /* ===== Design rationale section ===== */
+  .rationale{margin-top:72px;padding-top:48px;border-top:1px solid var(--page-border);}
+  .rationale > .lede{margin-bottom:36px;}
+  .rationale h2.section-title{font-size:26px;font-weight:800;letter-spacing:-.015em;margin:0 0 8px;}
+  .root-cause{
+    background:var(--accent-tint);border-radius:var(--radius-md);padding:20px 24px;margin:20px 0 36px;
+    font-size:14.5px;line-height:1.7;color:var(--page-ink);
+  }
+  .root-cause b{color:var(--accent-strong);}
+
+  .problem{
+    background:var(--page-surface);border-radius:var(--radius-lg);padding:28px 30px;margin:0 0 20px;
+    box-shadow:var(--shadow-card);
+  }
+  .problem h3{margin:0 0 20px;font-size:17px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;}
+  .problem h3 .pnum{
+    width:26px;height:26px;border-radius:8px;background:var(--accent-tint);color:var(--accent-strong);
+    display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-family:ui-monospace,monospace;font-weight:800;flex:none;
+  }
+  .stage{padding:16px 0;border-top:1px solid var(--page-border);}
+  .stage:first-of-type{border-top:none;padding-top:0;}
+  .stage-label{
+    display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--accent-strong);background:var(--accent-tint);padding:3px 10px;border-radius:999px;margin-bottom:10px;
+  }
+  .stage p{font-size:14px;line-height:1.7;color:var(--page-ink);margin:0;}
+  .stage p + p{margin-top:8px;}
+  .stage ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;}
+  .stage li{font-size:13.5px;line-height:1.65;color:var(--page-ink);}
+  .stage.impact{background:var(--accent-tint);margin:16px -30px -28px;padding:18px 30px 24px;border-top:none;border-radius:0 0 var(--radius-lg) var(--radius-lg);}
+  .stage.impact .stage-label{background:rgba(255,255,255,.5);}
+  .stage.impact p{font-weight:600;}
+
+  .subhead{font-size:20px;font-weight:800;letter-spacing:-.01em;margin:44px 0 6px;}
+  .subhead-lede{font-size:14px;color:var(--page-muted);margin:0 0 20px;line-height:1.6;}
+
+  .cmp-wrap{overflow-x:auto;border-radius:var(--radius-md);box-shadow:var(--shadow-card);margin:0 0 32px;}
+  table.cmp{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--page-surface);min-width:640px;}
+  table.cmp th{padding:14px 18px;text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--page-muted);font-weight:800;border-bottom:1px solid var(--page-border);}
+  table.cmp td{padding:14px 18px;border-bottom:1px solid var(--page-border);vertical-align:top;line-height:1.6;color:var(--page-ink);}
+  table.cmp tr:last-child td{border-bottom:none;}
+  table.cmp td.pick{background:var(--accent-tint);font-weight:700;position:relative;}
+  table.cmp td.pick::before{content:"최종 픽";display:block;font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-strong);margin-bottom:4px;}
+
+  @media (max-width:900px){
+    .problem{padding:22px;}
+    .stage.impact{margin:16px -22px -22px;padding:16px 22px 20px;}
+  }
 
   @media (max-width:760px){
     .changelog{grid-template-columns:1fr 1fr;}
@@ -220,20 +287,20 @@
   .promo .cta:hover,.btn-primary:hover{filter:brightness(1.08);}
   .btn-secondary:hover{background:#F6F8F7;}
 
-  .tabs{display:flex;gap:2px;background:#EEF2F0;padding:2px;border-radius:8px;}
-  .tabs button{border:0;background:transparent;font:inherit;font-size:12px;font-weight:700;color:var(--c-muted,#5E706A);padding:5px 12px;border-radius:6px;cursor:pointer;}
-  .tabs button.active{background:#fff;color:var(--c-ink,#101714);box-shadow:0 1px 2px rgba(0,0,0,.06);}
+  .tabs{display:flex;gap:2px;background:#EEF2F0;padding:3px;border-radius:999px;}
+  .tabs button{border:0;background:transparent;font:inherit;font-size:12px;font-weight:800;color:var(--c-muted,#5E706A);padding:6px 14px;border-radius:999px;cursor:pointer;}
+  .tabs button.active{background:#fff;color:var(--c-ink,#101714);box-shadow:0 1px 3px rgba(0,0,0,.08);}
 
-  .swtoggle{width:34px;height:19px;border-radius:99px;background:#DCE4E1;position:relative;cursor:pointer;flex:none;transition:background .15s ease;border:none;padding:0;}
-  .swtoggle::after{content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff;transition:transform .15s ease;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+  .swtoggle{width:38px;height:22px;border-radius:99px;background:#DCE4E1;position:relative;cursor:pointer;flex:none;transition:background .15s ease;border:none;padding:0;}
+  .swtoggle::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .15s ease;box-shadow:0 1px 2px rgba(0,0,0,.2);}
   .swtoggle.on{background:var(--c-accent,#17D97F);}
-  .swtoggle.on::after{transform:translateX(15px);}
+  .swtoggle.on::after{transform:translateX(16px);}
 
-  .dedicated-empty{padding:28px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;}
-  .dedicated-empty .ic{width:34px;height:34px;border-radius:9px;background:#EEF2F0;margin-bottom:4px;}
-  .dedicated-empty .t{font-size:13px;font-weight:700;}
-  .dedicated-empty .d{font-size:12px;color:var(--c-muted,#5E706A);max-width:320px;line-height:1.5;}
-  .dedicated-empty .cta{margin-top:8px;font-size:12px;font-weight:700;background:var(--c-ink,#101714);color:#fff;padding:8px 14px;border-radius:7px;cursor:pointer;}
+  .dedicated-empty{padding:32px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .dedicated-empty .ic{width:38px;height:38px;border-radius:12px;background:#EEF2F0;margin-bottom:4px;}
+  .dedicated-empty .t{font-size:13.5px;font-weight:800;}
+  .dedicated-empty .d{font-size:12px;color:var(--c-muted,#5E706A);max-width:320px;line-height:1.55;}
+  .dedicated-empty .cta{margin-top:10px;font-size:12.5px;font-weight:800;background:var(--c-ink,#101714);color:#fff;padding:9px 16px;border-radius:999px;cursor:pointer;}
 
   [data-panel="dedicated"]{display:none;}
 </style>
@@ -494,6 +561,189 @@
     한정됩니다. 색상은 Nodit 브랜드 그린을 액센트로 유지하고, 본문은 시스템 UI 폰트,
     수치 데이터는 tabular-nums 모노스페이스로 구분해 가독성을 높였습니다.
   </p>
+
+  <section class="rationale">
+    <p class="eyebrow">디자인 설명</p>
+    <h2 class="section-title">문제 · 가설 · 검증 · 임팩트</h2>
+    <p class="lede">
+      결과 화면뿐 아니라 문제를 해결하는 과정을 함께 보여드리기 위해, 발견한 문제마다
+      근거 → 가설 → 가설을 증명하기 위한 검증 조건 → 기대 임팩트 순으로 정리했습니다.
+    </p>
+
+    <div class="root-cause">
+      <b>근본 문제:</b> Overview 화면의 정보 위계가 "운영 대시보드"가 아니라 "마케팅 랜딩페이지"에
+      가깝습니다. 유저가 로그인하는 목적(내 프로젝트·사용량 확인)과 화면이 가장 먼저 보여주는 것
+      (제3자 상품 광고, 업그레이드 세일즈)이 어긋나 있고, 아래 4가지 문제는 이 root cause에서 파생됩니다.
+    </div>
+
+    <div class="problem">
+      <h3><span class="pnum">01</span>프로모션 배너가 정보 위계를 압도</h3>
+      <div class="stage">
+        <span class="stage-label">문제 · 근거</span>
+        <p>1440×900 기준 최초 뷰포트에서 프로모션성 콘텐츠(Solana 배너 + Dedicated 업그레이드 배너)가
+        차지하는 세로 영역이 약 260px/900px(≈29%). 실제 유저 데이터(프로젝트 테이블, 사용량)는 이
+        아래, 스크롤해야 등장합니다.</p>
+        <p>Nielsen Norman Group의 배너 블라인드니스(F-pattern 시선추적) 연구에 따르면, 반복적으로
+        배너 형태·위치에 노출된 유저는 해당 영역을 스캔에서 자동 제외하도록 학습됩니다 — 광고 효과와
+        UX를 동시에 잃는 구조입니다.</p>
+      </div>
+      <div class="stage">
+        <span class="stage-label">가설</span>
+        <p>실사용 데이터를 최상단, 프로모션을 보조 위치로 재배치하면 (a) 핵심 정보 인지 속도가
+        빨라지고 (b) 배너 참여율은 하락하지 않거나 오히려 상승한다(블라인드니스 해소).</p>
+      </div>
+      <div class="stage">
+        <span class="stage-label">가설 검증 조건 · 데이터 근거</span>
+        <ul>
+          <li>선행 조건 — 배너 CTA 클릭 이벤트 트래킹 추가(현재 미보유 가정)</li>
+          <li>실험 설계 — 신규 가입 유저 대상 기존안(A) vs 개선안(B) 50:50 A/B, 최소 2주 수집</li>
+          <li>1차 지표 — 진입 5초 내 프로젝트/사용량 영역 도달률(세션 리플레이) — B가 A 대비 15%p↑ 필요</li>
+          <li>가드레일 — 배너 CTR이 20% 이상 하락하면 가설 기각</li>
+        </ul>
+      </div>
+      <div class="stage impact">
+        <span class="stage-label">기대 임팩트</span>
+        <p>핵심 화면 인지 시간 단축 → 온보딩 완료율 상승. 배너 CTR 유지·상승 시 마케팅 성과 지표도 개선.</p>
+      </div>
+    </div>
+
+    <div class="problem">
+      <h3><span class="pnum">02</span>핵심 정보가 스크롤 없이 확인 불가</h3>
+      <div class="stage">
+        <span class="stage-label">문제 · 근거</span>
+        <p>원본 화면 기준 Usage Overview·My Plan 섹션 도달까지 스크롤 약 3회 필요. 콘솔 로그인의
+        최빈 목적(오늘 사용량/한도 확인)이 화면에서 가장 늦게 등장하는 역설적 구조입니다.</p>
+      </div>
+      <div class="stage">
+        <span class="stage-label">가설</span>
+        <p>상단에 4개 핵심 스탯(플랜·CU 사용량·요청수·프로젝트 수) 요약 스트립을 배치하면 정보 탐색
+        시간이 단축되고 세션당 재방문 빈도가 늘어난다.</p>
+      </div>
+      <div class="stage">
+        <span class="stage-label">가설 검증 조건 · 데이터 근거</span>
+        <ul>
+          <li>선행 조건 — 세션 단위 스크롤 뎁스 트래킹 필요(현재 미보유 가정)</li>
+          <li>실험 설계 — 기존 유저 코호트 대상 개선 전/후 비교(within-subject)</li>
+          <li>지표 — Time-to-Info(로그인~핵심 지표 확인 시간), Overview 재방문 빈도(WAU/MAU)</li>
+          <li>성공 기준 — Time-to-Info 50%↑ 단축, 4주 후 WAU/MAU 5%p↑</li>
+        </ul>
+      </div>
+      <div class="stage impact">
+        <span class="stage-label">기대 임팩트</span>
+        <p>API 한도를 자주 체크하는 파워 유저의 재방문 만족도·세션 효율 개선.</p>
+      </div>
+    </div>
+
+    <div class="problem">
+      <h3><span class="pnum">03</span>빈 데이터 상태에 액션 유도 부재</h3>
+      <div class="stage">
+        <span class="stage-label">문제 · 근거</span>
+        <p>신규 유저는 항상 0 데이터로 시작(By Projects/By APIs/CU 전부 0). 프로젝트 생성일
+        (2025-10-30)은 있는데 요청은 0건 — 가입은 했지만 활성화(Activation)로 전환되지 못한
+        상태입니다. 현재 화면은 이를 의미 없는 평평한 그래프로만 보여줄 뿐 다음 행동을 알려주지
+        않습니다.</p>
+      </div>
+      <div class="stage">
+        <span class="stage-label">가설</span>
+        <p>빈 상태를 액션 유도형 "Getting Started" 체크리스트로 대체하면 신규 유저의 활성화율
+        (첫 API 호출 도달률)이 상승한다.</p>
+      </div>
+      <div class="stage">
+        <span class="stage-label">가설 검증 조건 · 데이터 근거</span>
+        <ul>
+          <li>선행 조건 — 가입~첫 호출 Funnel 이벤트(가입→프로젝트 생성→키 발급→첫 호출) 정의·로깅</li>
+          <li>실험 설계 — 가입 주차 기준 코호트 비교(최소 4주) 또는 트래픽 충분 시 A/B 병행</li>
+          <li>지표 — Activation Rate(가입 후 7일 내 첫 호출 도달률), Time to First Value</li>
+          <li>근거 — Slack·Linear 등 B2B SaaS의 체크리스트형 온보딩이 Activation Rate를 개선한 사례
+          다수 — 유사 패턴으로 채택, Nodit 자체 데이터 재검증 필요</li>
+          <li>성공 기준 — Activation Rate 10%p↑</li>
+        </ul>
+      </div>
+      <div class="stage impact">
+        <span class="stage-label">기대 임팩트</span>
+        <p>Time to First Value 단축, 활성화 유저의 무료→유료 전환 가능성 제고.</p>
+      </div>
+    </div>
+
+    <div class="problem">
+      <h3><span class="pnum">04</span>업그레이드 CTA가 3곳에 분산</h3>
+      <div class="stage">
+        <span class="stage-label">문제 · 근거</span>
+        <p>"See Plans"(헤더), "Contact Us"(Dedicated 배너), "Upgrade"(My Plan) — 동일 의도(더 많은
+        리소스 필요)의 CTA가 서로 다른 위치·문구로 3개 존재합니다. 전환 의도가 3갈래로 쪼개져 있어
+        단일 퍼널로 분석이 불가능한 구조 자체가 문제입니다.</p>
+      </div>
+      <div class="stage">
+        <span class="stage-label">가설</span>
+        <p>목적별 CTA를 1곳으로 통합(Dedicated 문의=텍스트 링크, Plan 업그레이드=My Plan 카드 버튼)
+        하면 전환 경로가 명확해져 클릭→전환율이 상승한다.</p>
+      </div>
+      <div class="stage">
+        <span class="stage-label">가설 검증 조건 · 데이터 근거</span>
+        <ul>
+          <li>선행 조건 — CTA별 클릭 + 다운스트림 전환(폼 제출, Upgrade 완료) 연결 트래킹</li>
+          <li>실험 설계 — A/B(트래픽 충분 시) 또는 전/후 비교, "클릭→전환" 퍼널 드롭오프율 비교</li>
+          <li>지표 — Click-to-Conversion Rate(CTR보다 클릭 대비 실전환율에 집중)</li>
+          <li>성공 기준 — 통합 후 전환율이 기존 3개 CTA 평균 대비 상승</li>
+        </ul>
+      </div>
+      <div class="stage impact">
+        <span class="stage-label">기대 임팩트</span>
+        <p>Sales 리드 품질 상승, 단일 CTA 지점 확보로 이후 지속적인 A/B 테스트 가능.</p>
+      </div>
+    </div>
+
+    <p class="subhead">솔루션 비교</p>
+    <p class="subhead-lede">가장 영향이 큰 두 가지 의사결정은 복수 안을 검토한 뒤 골랐습니다.</p>
+
+    <div class="cmp-wrap">
+      <table class="cmp">
+        <thead><tr><th style="width:22%">A. 빈 데이터 상태 처리</th><th>장점</th><th>단점</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="pick">① Getting Started 체크리스트</td>
+            <td>다음 액션이 구체적, 진행률(1/4) 시각화로 동기부여, 기존 데이터로 상태 판단 가능해
+            구현 난이도 낮음</td>
+            <td>활성화 완료 후 숨김 처리 로직 필요</td>
+          </tr>
+          <tr>
+            <td>② 단순 Empty State</td>
+            <td>구현 가장 간단</td>
+            <td>수동적 정보 전달에 그침, 위젯 여러 개가 동시에 비면 페이지가 허전해 보임</td>
+          </tr>
+          <tr>
+            <td>③ 데모/프리뷰 데이터</td>
+            <td>데이터가 쌓였을 때의 모습을 미리 보여줌</td>
+            <td>"가짜 데이터"임을 명확히 표기 안 하면 실데이터로 오인 위험 — 온체인 데이터 특성상
+            신뢰 이슈로 치명적</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cmp-wrap">
+      <table class="cmp">
+        <thead><tr><th style="width:22%">B. 프로모션 배너 위치</th><th>장점</th><th>단점</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="pick">① 우측 보조 레일로 축소</td>
+            <td>노출은 유지하면서 위계는 부차적으로 조정 — 비즈니스 요구와 유저 경험 절충</td>
+            <td>여전히 일부 공간 차지</td>
+          </tr>
+          <tr>
+            <td>② 완전 제거</td>
+            <td>가장 깔끔한 데이터 중심 화면</td>
+            <td>신규 상품 홍보 니즈 미충족 — 실무에서 반려 가능성 높음</td>
+          </tr>
+          <tr>
+            <td>③ 별도 Discover 페이지 분리</td>
+            <td>Overview를 순수 상태 대시보드로 완전 분리, 확장성 좋음</td>
+            <td>IA 변경 필요 — 이번 과제 범위(Overview 화면)를 벗어남</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 </div>
 
 <script>
