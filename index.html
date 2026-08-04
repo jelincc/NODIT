@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nodit Console — Overview Redesign</title>
+<meta name="description" content="Lambda256 Product Designer 채용 과제 — Nodit Console Overview 화면 개선 프로토타입">
+<style>
+  :root{
+    --page-bg:#F3F5F4;
+    --page-surface:#FFFFFF;
+    --page-ink:#1B2422;
+    --page-muted:#5B6B65;
+    --page-border:#E3E8E6;
+    --accent:#17D97F;
+    --accent-strong:#0B7A46;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --page-bg:#14181A;
+      --page-surface:#1B2020;
+      --page-ink:#E7ECEA;
+      --page-muted:#9AACA6;
+      --page-border:#2A3230;
+      --accent-strong:#3EF0A0;
+    }
+  }
+  :root[data-theme="dark"]{
+    --page-bg:#14181A; --page-surface:#1B2020; --page-ink:#E7ECEA; --page-muted:#9AACA6; --page-border:#2A3230; --accent-strong:#3EF0A0;
+  }
+  :root[data-theme="light"]{
+    --page-bg:#F3F5F4; --page-surface:#FFFFFF; --page-ink:#1B2422; --page-muted:#5B6B65; --page-border:#E3E8E6; --accent-strong:#0B7A46;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--page-bg);
+    color:var(--page-ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .page{max-width:1360px;margin:0 auto;padding:48px 32px 96px;}
+
+  .masthead{margin-bottom:32px;}
+  .eyebrow{
+    font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--accent-strong);margin:0 0 10px;
+  }
+  h1{font-size:28px;line-height:1.25;margin:0 0 12px;letter-spacing:-.01em;text-wrap:balance;}
+  .lede{font-size:15px;line-height:1.6;color:var(--page-muted);max-width:680px;margin:0;}
+
+  .changelog{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:var(--page-border);border:1px solid var(--page-border);border-radius:12px;
+    overflow:hidden;margin:28px 0 40px;
+  }
+  .changelog div{background:var(--page-surface);padding:16px 18px;}
+  .changelog .num{
+    font-family:ui-monospace,"SF Mono","Cascadia Mono",monospace;
+    font-size:11px;color:var(--accent-strong);font-weight:700;letter-spacing:.04em;
+  }
+  .changelog p{margin:6px 0 0;font-size:13px;line-height:1.5;color:var(--page-ink);}
+
+  .frame-scroll{overflow-x:auto;padding-bottom:8px;}
+  .frame-label{
+    font-size:12px;color:var(--page-muted);margin:0 0 10px;font-weight:600;
+    display:flex;align-items:center;gap:8px;
+  }
+  .frame-label .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;}
+
+  /* ===== Fixed-tone console mockup (mirrors real product chrome; not theme-linked) ===== */
+  .console{
+    --c-sidebar:#0A0D0C;
+    --c-sidebar-ink:#C9D4D0;
+    --c-sidebar-muted:#68766F;
+    --c-sidebar-active:#12241C;
+    --c-bg:#FFFFFF;
+    --c-canvas:#F6F8F7;
+    --c-ink:#101714;
+    --c-muted:#5E706A;
+    --c-border:#E3E8E6;
+    --c-accent:#17D97F;
+    --c-accent-ink:#0B7A46;
+    --c-warn:#B8710C;
+    --c-crit:#C7402F;
+
+    min-width:1180px;
+    display:flex;
+    background:var(--c-canvas);
+    color:var(--c-ink);
+    border-radius:14px;
+    overflow:hidden;
+    border:1px solid var(--page-border);
+    box-shadow:0 30px 60px -30px rgba(0,0,0,.35);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+
+  /* Sidebar */
+  .sidebar{width:224px;flex:none;background:var(--c-sidebar);color:var(--c-sidebar-ink);padding:20px 14px;display:flex;flex-direction:column;gap:22px;}
+  .brand{display:flex;align-items:center;gap:9px;padding:0 6px;}
+  .brand .mark{width:22px;height:22px;border-radius:6px;background:var(--c-accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#062E1B;}
+  .brand .word{font-size:14px;font-weight:800;letter-spacing:.01em;color:#F2F6F4;}
+  .workspace{padding:8px 10px;border:1px solid #1E2624;border-radius:9px;font-size:12px;display:flex;align-items:center;justify-content:space-between;color:var(--c-sidebar-ink);}
+  .workspace .k{color:var(--c-sidebar-muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:2px;}
+  .navgroup{display:flex;flex-direction:column;gap:2px;}
+  .navgroup .label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--c-sidebar-muted);padding:6px 10px 4px;font-weight:700;}
+  .navitem{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;font-size:13px;color:var(--c-sidebar-ink);}
+  .navitem.active{background:var(--c-sidebar-active);color:#EAFBF3;font-weight:600;}
+  .navitem .ic{width:13px;height:13px;border-radius:50%;background:currentColor;opacity:.4;flex:none;}
+  .navitem.active .ic{opacity:1;background:var(--c-accent);}
+  .navitem .beta{margin-left:auto;font-size:9px;font-weight:700;background:#1E2624;color:var(--c-sidebar-muted);padding:1px 5px;border-radius:4px;}
+  .navsub{padding-left:23px;display:flex;flex-direction:column;gap:2px;}
+
+  /* Main */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--c-border);background:var(--c-bg);}
+  .crumb{font-size:12px;color:var(--c-muted);}
+  .topbar-right{display:flex;align-items:center;gap:14px;}
+  .btn-ghost{font-size:12px;color:var(--c-ink);border:1px solid var(--c-border);padding:6px 12px;border-radius:7px;font-weight:600;}
+  .avatar{width:26px;height:26px;border-radius:50%;background:#DCE4E1;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--c-muted);}
+
+  .content{padding:24px 28px 32px;display:flex;flex-direction:column;gap:22px;}
+  .content h2{font-size:19px;margin:0;letter-spacing:-.01em;}
+
+  /* Stat strip */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .stat{background:var(--c-bg);border:1px solid var(--c-border);border-radius:12px;padding:16px 18px;}
+  .stat .lbl{font-size:11px;color:var(--c-muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin:0 0 8px;}
+  .stat .val{font-family:ui-monospace,"SF Mono","Cascadia Mono",monospace;font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1;}
+  .stat .sub{font-size:12px;color:var(--c-muted);margin-top:6px;}
+  .chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;}
+  .chip.plan{background:#E9FBF3;color:var(--c-accent-ink);}
+  .chip.elastic{background:#EEF2F1;color:var(--c-muted);}
+  .track{height:6px;border-radius:99px;background:#EEF2F0;margin-top:10px;overflow:hidden;}
+  .track > span{display:block;height:100%;border-radius:99px;background:var(--c-accent);}
+
+  /* Grid columns */
+  .grid{display:grid;grid-template-columns:1.65fr 1fr;gap:16px;align-items:start;}
+  .col{display:flex;flex-direction:column;gap:16px;}
+  .card{background:var(--c-bg);border:1px solid var(--c-border);border-radius:12px;overflow:hidden;}
+  .card-h{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--c-border);}
+  .card-h h3{margin:0;font-size:14px;font-weight:700;}
+  .card-h .meta{font-size:12px;color:var(--c-muted);}
+  .card-b{padding:16px 18px;}
+  .link{font-size:12px;color:var(--c-accent-ink);font-weight:600;}
+
+  /* Getting started */
+  .checklist{display:flex;flex-direction:column;}
+  .step{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-top:1px solid var(--c-border);}
+  .step:first-child{border-top:none;padding-top:2px;}
+  .step .box{width:19px;height:19px;border-radius:6px;flex:none;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+  .step.done .box{background:var(--c-accent);color:#06331F;}
+  .step.todo .box{border:1.5px solid var(--c-border);color:transparent;}
+  .step .t{font-size:13px;font-weight:600;}
+  .step.done .t{color:var(--c-muted);text-decoration:line-through;text-decoration-color:var(--c-border);}
+  .step .d{font-size:12px;color:var(--c-muted);margin-top:2px;}
+  .step .cta{margin-left:auto;font-size:12px;font-weight:700;color:#06331F;background:var(--c-accent);padding:6px 12px;border-radius:7px;white-space:nowrap;}
+
+  /* Projects table */
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--c-muted);font-weight:700;padding:0 0 10px;}
+  td{padding:10px 0;border-top:1px solid var(--c-border);}
+  td.num{font-family:ui-monospace,"SF Mono","Cascadia Mono",monospace;font-variant-numeric:tabular-nums;}
+  .proj-name{font-weight:600;display:flex;align-items:center;gap:8px;}
+  .proj-name .sw{width:7px;height:7px;border-radius:50%;background:var(--c-accent);}
+
+  /* Usage card */
+  .usage-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .gauge-lbl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;}
+  .gauge-lbl .l{font-size:12px;color:var(--c-muted);font-weight:600;}
+  .gauge-lbl .r{font-family:ui-monospace,monospace;font-size:12px;color:var(--c-muted);font-variant-numeric:tabular-nums;}
+  .empty-mini{
+    border:1px dashed var(--c-border);border-radius:9px;padding:18px 14px;text-align:center;
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+  }
+  .empty-mini .ic{width:26px;height:26px;border-radius:50%;background:#EEF2F0;margin-bottom:2px;}
+  .empty-mini .t{font-size:12px;font-weight:600;color:var(--c-ink);}
+  .empty-mini .d{font-size:11px;color:var(--c-muted);line-height:1.4;}
+
+  .autoscale{display:flex;align-items:center;justify-content:space-between;padding-top:14px;margin-top:14px;border-top:1px solid var(--c-border);}
+  .autoscale .l{font-size:12px;font-weight:600;}
+  .autoscale .d{font-size:11px;color:var(--c-muted);}
+  .toggle-off{font-size:11px;font-weight:700;color:var(--c-muted);background:#EEF2F0;padding:3px 9px;border-radius:999px;}
+
+  /* Right rail */
+  .promo{background:linear-gradient(135deg,#0E1F17,#122A1F);border-radius:12px;padding:16px 18px;color:#E7F5EE;position:relative;overflow:hidden;}
+  .promo .k{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-accent);}
+  .promo .t{font-size:14px;font-weight:700;margin:6px 0 4px;line-height:1.3;}
+  .promo .d{font-size:12px;color:#B7CFC4;line-height:1.5;margin:0 0 12px;}
+  .promo .cta{display:inline-flex;font-size:12px;font-weight:700;background:var(--c-accent);color:#06331F;padding:6px 12px;border-radius:7px;}
+
+  .plan-feat{display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:12.5px;border-top:1px solid var(--c-border);}
+  .plan-feat:first-child{border-top:none;}
+  .plan-feat .v{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums;color:var(--c-muted);}
+  .btn-primary{width:100%;text-align:center;font-size:12.5px;font-weight:700;background:var(--c-ink);color:#fff;padding:9px;border-radius:8px;margin-top:12px;}
+  .btn-secondary{width:100%;text-align:center;font-size:12.5px;font-weight:700;border:1px solid var(--c-border);color:var(--c-ink);padding:9px;border-radius:8px;}
+
+  .footnote{font-size:12px;color:var(--page-muted);margin-top:18px;line-height:1.6;max-width:760px;}
+
+  @media (max-width:760px){
+    .changelog{grid-template-columns:1fr 1fr;}
+  }
+
+  /* Interactive states — this mockup is a clickable prototype, not a static image */
+  .navitem:not(.active){cursor:pointer;transition:background .12s ease;}
+  .navitem:not(.active):hover{background:#151B19;}
+  .btn-ghost{cursor:pointer;transition:background .12s ease,border-color .12s ease;}
+  .btn-ghost:hover{background:#F6F8F7;border-color:#C9D2CE;}
+  .link{cursor:pointer;}
+  .link:hover{text-decoration:underline;}
+  .step.todo{cursor:pointer;}
+  .step.todo:hover .box{border-color:var(--c-accent,#17D97F);}
+  .step .box{cursor:pointer;transition:background .12s ease,border-color .12s ease;}
+  .step .cta{cursor:pointer;transition:transform .1s ease;}
+  .step .cta:hover{transform:translateY(-1px);}
+  tbody tr:hover td{background:#FAFBFA;}
+  .promo .cta,.btn-primary,.btn-secondary{cursor:pointer;transition:filter .12s ease,transform .1s ease;}
+  .promo .cta:hover,.btn-primary:hover{filter:brightness(1.08);}
+  .btn-secondary:hover{background:#F6F8F7;}
+
+  .tabs{display:flex;gap:2px;background:#EEF2F0;padding:2px;border-radius:8px;}
+  .tabs button{border:0;background:transparent;font:inherit;font-size:12px;font-weight:700;color:var(--c-muted,#5E706A);padding:5px 12px;border-radius:6px;cursor:pointer;}
+  .tabs button.active{background:#fff;color:var(--c-ink,#101714);box-shadow:0 1px 2px rgba(0,0,0,.06);}
+
+  .swtoggle{width:34px;height:19px;border-radius:99px;background:#DCE4E1;position:relative;cursor:pointer;flex:none;transition:background .15s ease;border:none;padding:0;}
+  .swtoggle::after{content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff;transition:transform .15s ease;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+  .swtoggle.on{background:var(--c-accent,#17D97F);}
+  .swtoggle.on::after{transform:translateX(15px);}
+
+  .dedicated-empty{padding:28px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .dedicated-empty .ic{width:34px;height:34px;border-radius:9px;background:#EEF2F0;margin-bottom:4px;}
+  .dedicated-empty .t{font-size:13px;font-weight:700;}
+  .dedicated-empty .d{font-size:12px;color:var(--c-muted,#5E706A);max-width:320px;line-height:1.5;}
+  .dedicated-empty .cta{margin-top:8px;font-size:12px;font-weight:700;background:var(--c-ink,#101714);color:#fff;padding:8px 14px;border-radius:7px;cursor:pointer;}
+
+  [data-panel="dedicated"]{display:none;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="masthead">
+    <p class="eyebrow">Nodit Console · Product Designer 채용 과제</p>
+    <h1>Overview 화면 개선안</h1>
+    <p class="lede">
+      신규 가입 직후(사용량 0) 상태의 Overview 화면을 기준으로, 정보 위계와 온보딩 경험을
+      중심으로 재구성했습니다. 좌측 사이드바 및 콘텐츠는 실제 제품 화면을 재현한 목업이며,
+      개선 범위는 우측 메인 콘텐츠 영역입니다.
+    </p>
+  </div>
+
+  <div class="changelog">
+    <div><span class="num">01</span><p>프로모션 배너 2개를 히어로 위치에서 보조 컬럼의 소형 카드로 축소</p></div>
+    <div><span class="num">02</span><p>플랜·사용량·요청수를 상단 요약 스트립으로 끌어올려 스크롤 없이 확인 가능</p></div>
+    <div><span class="num">03</span><p>값이 0인 플랫라인 차트를 걷어내고 "Getting Started" 체크리스트로 대체</p></div>
+    <div><span class="num">04</span><p>업그레이드 CTA를 3곳 → 목적별 1곳으로 통합</p></div>
+  </div>
+
+  <p class="frame-label"><span class="dot"></span>Overview — 개선 후 (Figma 이관용 목업)</p>
+  <div class="frame-scroll">
+    <div class="console">
+      <aside class="sidebar">
+        <div class="brand"><span class="mark">N</span><span class="word">NODIT</span></div>
+        <div class="workspace"><span><span class="k">Workspace</span>Personal · dmddesign</span><span>›</span></div>
+
+        <nav class="navgroup">
+          <div class="label">Workspace</div>
+          <div class="navitem active"><span class="ic"></span>Overview</div>
+          <div class="navitem"><span class="ic"></span>Projects</div>
+          <div class="navitem"><span class="ic"></span>Chains</div>
+          <div class="navitem"><span class="ic"></span>Datashare<span class="beta">BETA</span></div>
+        </nav>
+
+        <nav class="navgroup">
+          <div class="label">Monitor</div>
+          <div class="navitem"><span class="ic"></span>Request Logs</div>
+          <div class="navitem"><span class="ic"></span>Webhook</div>
+          <div class="navitem"><span class="ic"></span>x402 Logs</div>
+          <div class="navitem"><span class="ic"></span>Status</div>
+        </nav>
+
+        <nav class="navgroup">
+          <div class="label">Services</div>
+          <div class="navitem"><span class="ic"></span>APIs</div>
+          <div class="navsub">
+            <div class="navitem"><span class="ic"></span>Asset &amp; Account</div>
+            <div class="navitem"><span class="ic"></span>Payments &amp; Transfers</div>
+            <div class="navitem"><span class="ic"></span>Txs &amp; Provenance</div>
+          </div>
+        </nav>
+
+        <nav class="navgroup" style="margin-top:auto;">
+          <div class="label">Manage</div>
+          <div class="navitem"><span class="ic"></span>Team</div>
+          <div class="navitem"><span class="ic"></span>Billing</div>
+        </nav>
+      </aside>
+
+      <div class="main">
+        <div class="topbar">
+          <span class="btn-ghost" style="display:flex;align-items:center;gap:6px;">Go to Project<span style="font-size:9px;">⌄</span></span>
+          <div class="topbar-right">
+            <span style="font-size:12px;color:var(--c-muted)">Find the best plan for your business!</span>
+            <span class="btn-ghost">See Plans</span>
+            <span style="font-size:12px;color:var(--c-muted)">Docs ↗</span>
+            <div class="avatar">DD</div>
+          </div>
+        </div>
+
+        <div class="content">
+          <h2 style="margin:2px 0 -6px;">Overview</h2>
+
+          <!-- Quick stats: surfaced immediately, replaces need to scroll past banners -->
+          <div class="stats">
+            <div class="stat">
+              <p class="lbl">Current Plan</p>
+              <span class="chip plan">STARTER</span>
+              <p class="sub">1,000,000 CUs/day · 300 CUs/sec</p>
+            </div>
+            <div class="stat">
+              <p class="lbl">Compute Units Today</p>
+              <span class="val">0</span><span style="font-size:12px;color:var(--c-muted)"> / 1,000,000</span>
+              <div class="track"><span style="width:0%"></span></div>
+            </div>
+            <div class="stat">
+              <p class="lbl">Requests (24h)</p>
+              <span class="val">0</span>
+              <p class="sub">0 failed</p>
+            </div>
+            <div class="stat">
+              <p class="lbl">Active Projects</p>
+              <span class="val">1</span>
+              <p class="sub"><span class="chip elastic">ELASTIC</span></p>
+            </div>
+          </div>
+
+          <div class="grid">
+            <!-- Left: primary/actionable content -->
+            <div class="col">
+
+              <div class="card">
+                <div class="card-h">
+                  <h3>Getting Started</h3>
+                  <span class="meta"><span id="gs-count">1</span> / 4 완료</span>
+                </div>
+                <div class="card-b">
+                  <div class="checklist" id="checklist">
+                    <div class="step done" data-step>
+                      <div class="box">✓</div>
+                      <div><div class="t">첫 프로젝트 생성</div><div class="d">My First Project · 2025-10-30</div></div>
+                    </div>
+                    <div class="step todo" data-step>
+                      <div class="box"></div>
+                      <div><div class="t">API Key 확인하기</div><div class="d">프로젝트 설정에서 발급된 키를 확인하세요</div></div>
+                      <span class="cta">View Key</span>
+                    </div>
+                    <div class="step todo" data-step>
+                      <div class="box"></div>
+                      <div><div class="t">첫 API 호출 보내기</div><div class="d">Web3 Data API로 5분 안에 첫 응답 받기</div></div>
+                      <span class="cta">Quickstart</span>
+                    </div>
+                    <div class="step todo" data-step>
+                      <div class="box"></div>
+                      <div><div class="t">팀원 초대하기</div><div class="d">Team 메뉴에서 협업자를 추가하세요</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-h">
+                  <h3>My Project</h3>
+                  <span class="link">Dedicated 인프라가 필요하신가요? Contact Us →</span>
+                </div>
+                <div class="card-b">
+                  <table>
+                    <thead>
+                      <tr><th>Project Name</th><th>Request (24h)</th><th>Failed (24h)</th><th>Created On</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><span class="proj-name"><span class="sw"></span>My First Project</span></td>
+                        <td class="num">0</td>
+                        <td class="num">0</td>
+                        <td class="num">2025-10-30</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-h">
+                  <h3>Usage Detail</h3>
+                  <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="tabs" id="usage-tabs">
+                      <button type="button" class="active" data-tab="elastic">Elastic</button>
+                      <button type="button" data-tab="dedicated">Dedicated</button>
+                    </div>
+                    <span class="meta" data-panel="elastic">2026-07-01 – 2026-07-29</span>
+                  </div>
+                </div>
+                <div class="card-b">
+
+                  <div data-panel="elastic">
+                    <div class="gauge-lbl"><span class="l">Prepaid Compute Units (Daily)</span><span class="r">0 CU · 0%</span></div>
+                    <div class="track" style="height:8px;margin-top:0;"><span style="width:0%"></span></div>
+
+                    <div class="usage-row" style="margin-top:18px;">
+                      <div class="empty-mini">
+                        <div class="ic"></div>
+                        <div class="t">By Projects — 데이터 없음</div>
+                        <div class="d">첫 API 호출 이후 프로젝트별 사용량이 여기 표시됩니다</div>
+                      </div>
+                      <div class="empty-mini">
+                        <div class="ic"></div>
+                        <div class="t">By APIs — 데이터 없음</div>
+                        <div class="d">Aptos Indexer / Webhook / Stream / Web3 Data / Node API별 분포가 여기 표시됩니다</div>
+                      </div>
+                    </div>
+
+                    <div class="autoscale">
+                      <div><div class="l">Auto-Scaling</div><div class="d">사용량이 한도를 초과하면 자동으로 확장됩니다</div></div>
+                      <button type="button" class="swtoggle" id="autoscale-toggle" aria-pressed="false" aria-label="Auto-Scaling 켜기/끄기"></button>
+                    </div>
+                  </div>
+
+                  <div data-panel="dedicated">
+                    <div class="dedicated-empty">
+                      <div class="ic"></div>
+                      <div class="t">아직 Dedicated 프로젝트가 없습니다</div>
+                      <div class="d">트래픽이 많거나 격리된 리소스가 필요하다면 전용 노드로 구성된 Dedicated 플랜을 문의해 보세요.</div>
+                      <span class="cta">Contact Us</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right: secondary / account rail -->
+            <div class="col">
+
+              <div class="promo">
+                <div style="display:flex;gap:6px;margin-bottom:2px;">
+                  <span style="font-size:9px;font-weight:800;letter-spacing:.04em;background:rgba(23,217,143,.18);color:var(--c-accent,#17D97F);padding:2px 7px;border-radius:999px;">0% FEE</span>
+                  <span style="font-size:9px;font-weight:800;letter-spacing:.04em;background:rgba(255,255,255,.1);color:#B7CFC4;padding:2px 7px;border-radius:999px;">ENTERPRISE</span>
+                </div>
+                <p class="k">Security</p>
+                <p class="t">Non-Custodial Solana Staking</p>
+                <p class="d">기관 표준의 보안으로 Solana를 스테이킹하세요.</p>
+                <span class="cta">Start Staking →</span>
+                <div style="display:flex;gap:5px;margin-top:14px;">
+                  <span style="width:5px;height:5px;border-radius:50%;background:var(--c-accent,#17D97F);"></span>
+                  <span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);"></span>
+                  <span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);"></span>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-h"><h3>My Plan</h3><span class="link">Upgrade</span></div>
+                <div class="card-b">
+                  <span class="chip plan">STARTER</span>
+                  <div style="margin-top:10px;">
+                    <div class="plan-feat"><span>CUs / day</span><span class="v">1,000,000</span></div>
+                    <div class="plan-feat"><span>Throughput</span><span class="v">300 CUs/sec</span></div>
+                    <div class="plan-feat"><span>Projects</span><span class="v">1</span></div>
+                  </div>
+                  <div class="btn-primary">Upgrade Plan</div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-h"><h3>Payment Details</h3></div>
+                <div class="card-b">
+                  <p style="font-size:12px;color:var(--c-muted);margin:0 0 12px;">등록된 결제 수단이 없습니다.</p>
+                  <div class="btn-secondary">+ Add Payment Method</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="footnote">
+    ※ 목업의 사이드바·헤더 크롬은 실제 Nodit Console 화면을 참고해 재현했으며, 개선 제안은
+    메인 콘텐츠 영역(요약 스트립 · Getting Started · Project · Usage Detail · 우측 레일)에
+    한정됩니다. 색상은 Nodit 브랜드 그린을 액센트로 유지하고, 본문은 시스템 UI 폰트,
+    수치 데이터는 tabular-nums 모노스페이스로 구분해 가독성을 높였습니다.
+  </p>
+</div>
+
+<script>
+  // Getting Started checklist — click a step to toggle done/todo
+  var steps = document.querySelectorAll('#checklist [data-step]');
+  var countEl = document.getElementById('gs-count');
+  function updateCount(){
+    var done = document.querySelectorAll('#checklist .step.done').length;
+    if (countEl) countEl.textContent = done;
+  }
+  steps.forEach(function(step){
+    step.addEventListener('click', function(e){
+      var isDone = step.classList.contains('done');
+      step.classList.toggle('done', !isDone);
+      step.classList.toggle('todo', isDone);
+      var box = step.querySelector('.box');
+      box.textContent = isDone ? '' : '✓';
+      updateCount();
+    });
+  });
+
+  // Usage Detail — Elastic / Dedicated tabs
+  var tabBtns = document.querySelectorAll('#usage-tabs button');
+  tabBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tabBtns.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var target = btn.getAttribute('data-tab');
+      document.querySelectorAll('[data-panel]').forEach(function(p){
+        p.style.display = (p.getAttribute('data-panel') === target) ? '' : 'none';
+      });
+    });
+  });
+
+  // Auto-Scaling toggle
+  var asToggle = document.getElementById('autoscale-toggle');
+  if (asToggle){
+    asToggle.addEventListener('click', function(){
+      var on = asToggle.classList.toggle('on');
+      asToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+</script>
+</body>
+</html>
