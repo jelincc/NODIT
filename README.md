@@ -5,7 +5,7 @@ Nodit Console의 Overview 화면을 분석하고, 정보 위계 개선과 "Job(�
 더해 다시 설계했습니다.
 
 **Live prototype:** https://jelincc.github.io/NODIT/
-**Design deck (문제 정의 · 리서치 · 가설):** https://jelincc.github.io/NODIT/design.html
+**Design deck (문제 정의 · 리서치 · 가설):** https://jelincc.github.io/NODIT/design/
 
 ## 무엇을 바꿨나
 

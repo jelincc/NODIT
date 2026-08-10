@@ -3,7 +3,7 @@
 전체 리서치 과정(문제 정의 → 제안 방향 → Persona/Job 정리 → 정보 구조 → 가설과 검증)은
 아래 디자인 덱에 정리했습니다.
 
-**Design deck:** https://jelincc.github.io/NODIT/design.html
+**Design deck:** https://jelincc.github.io/NODIT/design/
 **Live prototype:** https://jelincc.github.io/NODIT/
 
 ## 요약
