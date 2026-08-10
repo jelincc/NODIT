@@ -3,147 +3,70 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nodit Console — Overview Redesign</title>
-<meta name="description" content="Lambda256 Product Designer 채용 과제 — Nodit Console Overview 화면 개선 프로토타입">
+<title>Nodit Console</title>
+<meta name="description" content="Nodit Console — Overview 화면 개선 프로토타입">
 <style>
   :root{
-    --page-bg:#F4F7F5;
-    --page-surface:#FFFFFF;
-    --page-ink:#0E1512;
-    --page-muted:#647169;
-    --page-border:#E7ECE9;
-    --accent:#17D97F;
-    --accent-strong:#0A7A46;
-    --accent-tint:#E8FAF1;
-    --shadow-card:0 1px 2px rgba(14,21,18,.04), 0 16px 40px -24px rgba(14,21,18,.16);
-    --shadow-card-hover:0 2px 4px rgba(14,21,18,.06), 0 20px 48px -20px rgba(14,21,18,.20);
-    --radius-lg:20px;
-    --radius-md:14px;
-    --radius-sm:10px;
-  }
-  @media (prefers-color-scheme: dark){
-    :root{
-      --page-bg:#111513;
-      --page-surface:#1A211E;
-      --page-ink:#EDF3EF;
-      --page-muted:#93A39B;
-      --page-border:#28322D;
-      --accent-strong:#3EF0A0;
-      --accent-tint:#132A20;
-      --shadow-card:0 1px 2px rgba(0,0,0,.3), 0 16px 40px -20px rgba(0,0,0,.55);
-      --shadow-card-hover:0 2px 4px rgba(0,0,0,.35), 0 20px 48px -16px rgba(0,0,0,.6);
-    }
-  }
-  :root[data-theme="dark"]{
-    --page-bg:#111513; --page-surface:#1A211E; --page-ink:#EDF3EF; --page-muted:#93A39B; --page-border:#28322D; --accent-strong:#3EF0A0; --accent-tint:#132A20;
-    --shadow-card:0 1px 2px rgba(0,0,0,.3), 0 16px 40px -20px rgba(0,0,0,.55);
-    --shadow-card-hover:0 2px 4px rgba(0,0,0,.35), 0 20px 48px -16px rgba(0,0,0,.6);
-  }
-  :root[data-theme="light"]{
-    --page-bg:#F4F7F5; --page-surface:#FFFFFF; --page-ink:#0E1512; --page-muted:#647169; --page-border:#E7ECE9; --accent-strong:#0A7A46; --accent-tint:#E8FAF1;
-    --shadow-card:0 1px 2px rgba(14,21,18,.04), 0 16px 40px -24px rgba(14,21,18,.16);
-    --shadow-card-hover:0 2px 4px rgba(14,21,18,.06), 0 20px 48px -20px rgba(14,21,18,.20);
-  }
+    --page-bg:#F4F7F5; --page-surface:#FFFFFF; --page-ink:#0E1512; --page-muted:#647169; --page-border:#E7ECE9;
+    --accent:#17D97F; --accent-strong:#0A7A46; --accent-tint:#E8FAF1;
+    --radius-lg:20px; --radius-md:14px; --radius-sm:10px;
 
+    --c-sidebar:#0A0D0C; --c-sidebar-ink:#C9D4D0; --c-sidebar-muted:#68766F; --c-sidebar-active:#12241C;
+    --c-bg:#FFFFFF; --c-canvas:#F6F8F7; --c-ink:#101714; --c-muted:#5E706A; --c-border:#E3E8E6;
+    --c-accent:#17D97F; --c-accent-ink:#0B7A46; --c-warn:#B8710C; --c-crit:#C7402F;
+
+    --job-build:#1D5FB0; --job-build-tint:#EAF1FC;
+    --job-operate:#B8501F; --job-operate-tint:#FCEEE6;
+    --job-manage:#0B7A46; --job-manage-tint:#E8FAF1;
+    --job-investigate:#4A3AA7; --job-investigate-tint:#EFEDFA;
+    --job-analyze:#0C7A72; --job-analyze-tint:#E3F5F3;
+
+    --good:#0B7A46; --good-tint:#E4F7EC; --warn:#B8710C; --warn-tint:#FBF0DA; --crit:#C7402F; --crit-tint:#FBEAEA;
+  }
   *{box-sizing:border-box;}
+  html,body{height:100%;margin:0;}
   body{
-    margin:0;
-    background:var(--page-bg);
-    color:var(--page-ink);
+    background:var(--c-canvas); color:var(--c-ink);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-font-smoothing:antialiased;
   }
+  button,input{font-family:inherit;}
+  a{color:inherit; text-decoration:none;}
 
-  .page{max-width:1360px;margin:0 auto;padding:64px 32px 120px;}
+  .app{height:100vh; display:flex;}
 
-  .masthead{margin-bottom:40px;}
-  .eyebrow{
-    font-size:13px;font-weight:700;letter-spacing:.02em;
-    color:var(--accent-strong);margin:0 0 14px;
-    display:inline-flex;align-items:center;gap:8px;background:var(--accent-tint);
-    padding:6px 14px 6px 10px;border-radius:999px;
-  }
-  .eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;}
-  h1{font-size:36px;line-height:1.22;margin:0 0 14px;letter-spacing:-.02em;font-weight:800;text-wrap:balance;}
-  .lede{font-size:16px;line-height:1.65;color:var(--page-muted);max-width:640px;margin:0;}
-
-  .changelog{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
-    margin:32px 0 44px;
-  }
-  .changelog div{
-    background:var(--page-surface);padding:20px 20px 22px;border-radius:var(--radius-md);
-    box-shadow:var(--shadow-card);transition:box-shadow .2s ease,transform .2s ease;
-  }
-  .changelog div:hover{box-shadow:var(--shadow-card-hover);transform:translateY(-2px);}
-  .changelog .num{
-    display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:7px;
-    font-size:11px;background:var(--accent-tint);color:var(--accent-strong);font-weight:800;letter-spacing:.02em;
-  }
-  .changelog p{margin:12px 0 0;font-size:13.5px;line-height:1.55;color:var(--page-ink);font-weight:500;}
-
-  .frame-scroll{overflow-x:auto;padding-bottom:8px;}
-  .frame-label{
-    font-size:13px;color:var(--page-muted);margin:0 0 12px;font-weight:600;
-    display:flex;align-items:center;gap:8px;
-  }
-  .frame-label .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;}
-
-  /* ===== Fixed-tone console mockup (mirrors real product chrome; not theme-linked) ===== */
-  .console{
-    --c-sidebar:#0A0D0C;
-    --c-sidebar-ink:#C9D4D0;
-    --c-sidebar-muted:#68766F;
-    --c-sidebar-active:#12241C;
-    --c-bg:#FFFFFF;
-    --c-canvas:#F6F8F7;
-    --c-ink:#101714;
-    --c-muted:#5E706A;
-    --c-border:#E3E8E6;
-    --c-accent:#17D97F;
-    --c-accent-ink:#0B7A46;
-    --c-warn:#B8710C;
-    --c-crit:#C7402F;
-
-    min-width:1180px;
-    display:flex;
-    background:var(--c-canvas);
-    color:var(--c-ink);
-    border-radius:22px;
-    overflow:hidden;
-    box-shadow:0 40px 80px -32px rgba(0,0,0,.4);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  }
-
-  /* Sidebar */
-  .sidebar{width:228px;flex:none;background:var(--c-sidebar);color:var(--c-sidebar-ink);padding:22px 14px;display:flex;flex-direction:column;gap:24px;}
-  .brand{display:flex;align-items:center;gap:9px;padding:0 6px;}
+  /* ===== Sidebar (fidelity to real Nodit Console) ===== */
+  .sidebar{width:228px; flex:none; background:var(--c-sidebar); color:var(--c-sidebar-ink); padding:22px 14px; display:flex; flex-direction:column; gap:22px; overflow-y:auto;}
+  .brand{display:flex; align-items:center; gap:9px; padding:0 6px; cursor:pointer;}
   .brand .mark{width:24px;height:24px;border-radius:8px;background:var(--c-accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#062E1B;}
   .brand .word{font-size:14.5px;font-weight:800;letter-spacing:.01em;color:#F2F6F4;}
   .workspace{padding:9px 12px;border:1px solid #1E2624;border-radius:12px;font-size:12px;display:flex;align-items:center;justify-content:space-between;color:var(--c-sidebar-ink);}
   .workspace .k{color:var(--c-sidebar-muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:2px;}
   .navgroup{display:flex;flex-direction:column;gap:2px;}
   .navgroup .label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--c-sidebar-muted);padding:8px 10px 4px;font-weight:700;}
-  .navitem{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;font-size:13px;color:var(--c-sidebar-ink);}
+  .navitem{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;font-size:13px;color:var(--c-sidebar-ink);cursor:pointer;transition:background .12s;}
+  .navitem:hover{background:#151B19;}
   .navitem.active{background:var(--c-sidebar-active);color:#EAFBF3;font-weight:700;}
   .navitem .ic{width:13px;height:13px;border-radius:50%;background:currentColor;opacity:.4;flex:none;}
   .navitem.active .ic{opacity:1;background:var(--c-accent);}
   .navitem .beta{margin-left:auto;font-size:9px;font-weight:700;background:#1E2624;color:var(--c-sidebar-muted);padding:1px 5px;border-radius:4px;}
   .navsub{padding-left:23px;display:flex;flex-direction:column;gap:2px;}
 
-  /* Main */
-  .main{flex:1;min-width:0;display:flex;flex-direction:column;}
-  .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--c-border);background:var(--c-bg);}
-  .crumb{font-size:12px;color:var(--c-muted);}
+  /* ===== Main ===== */
+  .main{flex:1; min-width:0; display:flex; flex-direction:column;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--c-border);background:var(--c-bg); flex:none;}
+  .btn-ghost{font-size:12.5px;color:var(--c-ink);border:1.5px solid var(--c-border);padding:7px 14px;border-radius:999px;font-weight:700;cursor:pointer;background:none;transition:background .12s,border-color .12s;}
+  .btn-ghost:hover{background:#F6F8F7;border-color:#C9D2CE;}
   .topbar-right{display:flex;align-items:center;gap:16px;}
-  .btn-ghost{font-size:12.5px;color:var(--c-ink);border:1.5px solid var(--c-border);padding:7px 14px;border-radius:999px;font-weight:700;}
-  .avatar{width:28px;height:28px;border-radius:50%;background:var(--c-accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#06331F;}
+  .avatar{width:28px;height:28px;border-radius:50%;background:var(--c-accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#06331F;cursor:pointer;}
 
-  .content{padding:28px 32px 36px;display:flex;flex-direction:column;gap:24px;background:var(--c-canvas);}
-  .content h2{font-size:22px;margin:0;letter-spacing:-.015em;font-weight:800;}
+  .content{flex:1; overflow-y:auto; padding:28px 32px 60px; background:var(--c-canvas);}
+  .page-view{display:none;}
+  .page-view.active{display:block;}
+  .content h2{font-size:22px;margin:0 0 20px;letter-spacing:-.015em;font-weight:800;}
 
   /* Stat strip */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
   .stat{background:var(--c-bg);border-radius:16px;padding:18px 20px;box-shadow:0 1px 2px rgba(16,23,20,.04),0 10px 24px -18px rgba(16,23,20,.25);}
   .stat .lbl{font-size:11px;color:var(--c-muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin:0 0 10px;}
   .stat .val{font-family:ui-monospace,"SF Mono","Cascadia Mono",monospace;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.01em;}
@@ -151,603 +74,768 @@
   .chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;}
   .chip.plan{background:#E4FBEF;color:var(--c-accent-ink);}
   .chip.elastic{background:#EEF2F1;color:var(--c-muted);}
+  .chip.good{background:var(--good-tint);color:var(--good);}
+  .chip.warn{background:var(--warn-tint);color:var(--warn);}
+  .chip.crit{background:var(--crit-tint);color:var(--crit);}
+  .chip .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
   .track{height:7px;border-radius:99px;background:#EEF2F0;margin-top:12px;overflow:hidden;}
   .track > span{display:block;height:100%;border-radius:99px;background:var(--c-accent);}
+
+  /* Job entry section — the new improvement */
+  .jobsection{margin:0 0 30px;}
+  .jobsection-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;}
+  .jobsection-head h3{margin:0; font-size:15px; font-weight:800;}
+  .jobsection-head span{font-size:12px; color:var(--c-muted);}
+  .jobgrid{display:grid; grid-template-columns:repeat(5,1fr); gap:12px;}
+  .jobcard{
+    background:var(--c-bg); border-radius:16px; padding:16px 16px 18px; box-shadow:0 1px 2px rgba(16,23,20,.04),0 10px 24px -18px rgba(16,23,20,.25);
+    border-top:3px solid transparent; cursor:pointer; display:flex; flex-direction:column; gap:9px;
+    transition:box-shadow .15s,transform .15s;
+  }
+  .jobcard:hover{box-shadow:0 2px 4px rgba(16,23,20,.06),0 16px 32px -14px rgba(16,23,20,.32);transform:translateY(-2px);}
+  .jobcard.build{border-top-color:var(--job-build);}
+  .jobcard.operate{border-top-color:var(--job-operate);}
+  .jobcard.manage{border-top-color:var(--job-manage);}
+  .jobcard.investigate{border-top-color:var(--job-investigate);}
+  .jobcard.analyze{border-top-color:var(--job-analyze);}
+  .jobcard .tag{font-family:ui-monospace,monospace; font-size:10px; font-weight:800; letter-spacing:.05em; padding:3px 8px; border-radius:999px; width:fit-content;}
+  .jobcard.build .tag{background:var(--job-build-tint);color:var(--job-build);}
+  .jobcard.operate .tag{background:var(--job-operate-tint);color:var(--job-operate);}
+  .jobcard.manage .tag{background:var(--job-manage-tint);color:var(--job-manage);}
+  .jobcard.investigate .tag{background:var(--job-investigate-tint);color:var(--job-investigate);}
+  .jobcard.analyze .tag{background:var(--job-analyze-tint);color:var(--job-analyze);}
+  .jobcard h4{margin:0; font-size:13.5px; font-weight:800; line-height:1.35;}
+  .jobcard p{margin:0; font-size:11.5px; color:var(--c-muted); line-height:1.5;}
+  .jobcard .metric{font-family:ui-monospace,monospace; font-size:10.5px; color:var(--c-muted); border-top:1px solid var(--c-border); padding-top:8px; margin-top:1px;}
+  .jobcard .go{font-size:11px; font-weight:800; color:var(--c-accent-ink); display:flex; align-items:center; gap:4px;}
 
   /* Grid columns */
   .grid{display:grid;grid-template-columns:1.65fr 1fr;gap:16px;align-items:start;}
   .col{display:flex;flex-direction:column;gap:16px;}
   .card{background:var(--c-bg);border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(16,23,20,.04),0 10px 24px -18px rgba(16,23,20,.25);}
-  .card-h{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--c-border);}
+  .card-h{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--c-border); gap:12px;}
   .card-h h3{margin:0;font-size:14.5px;font-weight:800;}
   .card-h .meta{font-size:12px;color:var(--c-muted);}
   .card-b{padding:18px 20px;}
-  .link{font-size:12.5px;color:var(--c-accent-ink);font-weight:700;}
+  .link{font-size:12.5px;color:var(--c-accent-ink);font-weight:700;cursor:pointer;}
+  .link:hover{text-decoration:underline;}
 
   /* Getting started */
   .checklist{display:flex;flex-direction:column;}
   .step{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-top:1px solid var(--c-border);}
   .step:first-child{border-top:none;padding-top:2px;}
-  .step .box{width:22px;height:22px;border-radius:8px;flex:none;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;}
+  .step .box{width:22px;height:22px;border-radius:8px;flex:none;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;cursor:pointer;transition:background .12s,border-color .12s;}
   .step.done .box{background:var(--c-accent);color:#06331F;}
   .step.todo .box{border:1.75px solid var(--c-border);color:transparent;}
+  .step.todo:hover .box{border-color:var(--c-accent);}
   .step .t{font-size:13.5px;font-weight:700;}
   .step.done .t{color:var(--c-muted);text-decoration:line-through;text-decoration-color:var(--c-border);}
   .step .d{font-size:12px;color:var(--c-muted);margin-top:3px;}
-  .step .cta{margin-left:auto;font-size:12px;font-weight:800;color:#06331F;background:var(--c-accent);padding:8px 14px;border-radius:999px;white-space:nowrap;}
+  .step .cta{margin-left:auto;font-size:12px;font-weight:800;color:#06331F;background:var(--c-accent);padding:8px 14px;border-radius:999px;white-space:nowrap;cursor:pointer;transition:transform .1s;}
+  .step .cta:hover{transform:translateY(-1px);}
 
-  /* Projects table */
+  /* Tables */
   table{width:100%;border-collapse:collapse;font-size:13px;}
-  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--c-muted);font-weight:700;padding:0 0 12px;}
-  td{padding:12px 0;border-top:1px solid var(--c-border);}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--c-muted);font-weight:700;padding:0 12px 12px 0;}
+  td{padding:12px 12px 12px 0;border-top:1px solid var(--c-border);}
   td.num{font-family:ui-monospace,"SF Mono","Cascadia Mono",monospace;font-variant-numeric:tabular-nums;}
   .proj-name{font-weight:700;display:flex;align-items:center;gap:8px;}
   .proj-name .sw{width:7px;height:7px;border-radius:50%;background:var(--c-accent);}
+  tbody tr.clickable{cursor:pointer;}
+  tbody tr.clickable:hover td{background:#FAFBFA;}
 
   /* Usage card */
   .usage-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   .gauge-lbl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
   .gauge-lbl .l{font-size:12.5px;color:var(--c-muted);font-weight:700;}
   .gauge-lbl .r{font-family:ui-monospace,monospace;font-size:12px;color:var(--c-muted);font-variant-numeric:tabular-nums;}
-  .empty-mini{
-    border:1.5px dashed var(--c-border);border-radius:14px;padding:20px 16px;text-align:center;
-    display:flex;flex-direction:column;align-items:center;gap:4px;
-  }
+  .empty-mini{border:1.5px dashed var(--c-border);border-radius:14px;padding:20px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;}
   .empty-mini .ic{width:26px;height:26px;border-radius:50%;background:#EEF2F0;margin-bottom:2px;}
   .empty-mini .t{font-size:12px;font-weight:600;color:var(--c-ink);}
   .empty-mini .d{font-size:11px;color:var(--c-muted);line-height:1.4;}
-
   .autoscale{display:flex;align-items:center;justify-content:space-between;padding-top:16px;margin-top:16px;border-top:1px solid var(--c-border);}
   .autoscale .l{font-size:12.5px;font-weight:700;}
   .autoscale .d{font-size:11px;color:var(--c-muted);}
-  .toggle-off{font-size:11px;font-weight:700;color:var(--c-muted);background:#EEF2F0;padding:3px 9px;border-radius:999px;}
 
   /* Right rail */
   .promo{background:linear-gradient(135deg,#0E1F17,#122A1F);border-radius:16px;padding:20px 22px;color:#E7F5EE;position:relative;overflow:hidden;}
   .promo .k{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-accent);}
   .promo .t{font-size:15px;font-weight:800;margin:8px 0 5px;line-height:1.3;letter-spacing:-.005em;}
   .promo .d{font-size:12.5px;color:#B7CFC4;line-height:1.55;margin:0 0 14px;}
-  .promo .cta{display:inline-flex;font-size:12.5px;font-weight:800;background:var(--c-accent);color:#06331F;padding:9px 16px;border-radius:999px;}
+  .promo .cta{display:inline-flex;font-size:12.5px;font-weight:800;background:var(--c-accent);color:#06331F;padding:9px 16px;border-radius:999px;cursor:pointer;transition:filter .12s;}
+  .promo .cta:hover{filter:brightness(1.08);}
 
   .plan-feat{display:flex;align-items:center;justify-content:space-between;padding:9px 0;font-size:13px;border-top:1px solid var(--c-border);}
   .plan-feat:first-child{border-top:none;}
   .plan-feat .v{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums;color:var(--c-muted);font-weight:600;}
-  .btn-primary{width:100%;text-align:center;font-size:13px;font-weight:800;background:var(--c-ink);color:#fff;padding:12px;border-radius:12px;margin-top:14px;}
-  .btn-secondary{width:100%;text-align:center;font-size:13px;font-weight:800;border:1.5px solid var(--c-border);color:var(--c-ink);padding:12px;border-radius:12px;}
-
-  .footnote{font-size:12px;color:var(--page-muted);margin-top:18px;line-height:1.6;max-width:760px;}
-
-  /* ===== Design rationale section ===== */
-  .rationale{margin-top:72px;padding-top:48px;border-top:1px solid var(--page-border);}
-  .rationale > .lede{margin-bottom:36px;}
-  .rationale h2.section-title{font-size:26px;font-weight:800;letter-spacing:-.015em;margin:0 0 8px;}
-  .root-cause{
-    background:var(--accent-tint);border-radius:var(--radius-md);padding:20px 24px;margin:20px 0 36px;
-    font-size:14.5px;line-height:1.7;color:var(--page-ink);
-  }
-  .root-cause b{color:var(--accent-strong);}
-
-  .problem{
-    background:var(--page-surface);border-radius:var(--radius-lg);padding:28px 30px;margin:0 0 20px;
-    box-shadow:var(--shadow-card);
-  }
-  .problem h3{margin:0 0 20px;font-size:17px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;}
-  .problem h3 .pnum{
-    width:26px;height:26px;border-radius:8px;background:var(--accent-tint);color:var(--accent-strong);
-    display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-family:ui-monospace,monospace;font-weight:800;flex:none;
-  }
-  .stage{padding:16px 0;border-top:1px solid var(--page-border);}
-  .stage:first-of-type{border-top:none;padding-top:0;}
-  .stage-label{
-    display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
-    color:var(--accent-strong);background:var(--accent-tint);padding:3px 10px;border-radius:999px;margin-bottom:10px;
-  }
-  .stage p{font-size:14px;line-height:1.7;color:var(--page-ink);margin:0;}
-  .stage p + p{margin-top:8px;}
-  .stage ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;}
-  .stage li{font-size:13.5px;line-height:1.65;color:var(--page-ink);}
-  .stage.impact{background:var(--accent-tint);margin:16px -30px -28px;padding:18px 30px 24px;border-top:none;border-radius:0 0 var(--radius-lg) var(--radius-lg);}
-  .stage.impact .stage-label{background:rgba(255,255,255,.5);}
-  .stage.impact p{font-weight:600;}
-
-  .subhead{font-size:20px;font-weight:800;letter-spacing:-.01em;margin:44px 0 6px;}
-  .subhead-lede{font-size:14px;color:var(--page-muted);margin:0 0 20px;line-height:1.6;}
-
-  .cmp-wrap{overflow-x:auto;border-radius:var(--radius-md);box-shadow:var(--shadow-card);margin:0 0 32px;}
-  table.cmp{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--page-surface);min-width:640px;}
-  table.cmp th{padding:14px 18px;text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--page-muted);font-weight:800;border-bottom:1px solid var(--page-border);}
-  table.cmp td{padding:14px 18px;border-bottom:1px solid var(--page-border);vertical-align:top;line-height:1.6;color:var(--page-ink);}
-  table.cmp tr:last-child td{border-bottom:none;}
-  table.cmp td.pick{background:var(--accent-tint);font-weight:700;position:relative;}
-  table.cmp td.pick::before{content:"최종 픽";display:block;font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-strong);margin-bottom:4px;}
-
-  @media (max-width:900px){
-    .problem{padding:22px;}
-    .stage.impact{margin:16px -22px -22px;padding:16px 22px 20px;}
-  }
-
-  @media (max-width:760px){
-    .changelog{grid-template-columns:1fr 1fr;}
-  }
-
-  /* Interactive states — this mockup is a clickable prototype, not a static image */
-  .navitem:not(.active){cursor:pointer;transition:background .12s ease;}
-  .navitem:not(.active):hover{background:#151B19;}
-  .btn-ghost{cursor:pointer;transition:background .12s ease,border-color .12s ease;}
-  .btn-ghost:hover{background:#F6F8F7;border-color:#C9D2CE;}
-  .link{cursor:pointer;}
-  .link:hover{text-decoration:underline;}
-  .step.todo{cursor:pointer;}
-  .step.todo:hover .box{border-color:var(--c-accent,#17D97F);}
-  .step .box{cursor:pointer;transition:background .12s ease,border-color .12s ease;}
-  .step .cta{cursor:pointer;transition:transform .1s ease;}
-  .step .cta:hover{transform:translateY(-1px);}
-  tbody tr:hover td{background:#FAFBFA;}
-  .promo .cta,.btn-primary,.btn-secondary{cursor:pointer;transition:filter .12s ease,transform .1s ease;}
-  .promo .cta:hover,.btn-primary:hover{filter:brightness(1.08);}
+  .btn-primary{width:100%;text-align:center;font-size:13px;font-weight:800;background:var(--c-ink);color:#fff;padding:12px;border-radius:12px;margin-top:14px;cursor:pointer;transition:filter .12s;}
+  .btn-primary:hover{filter:brightness(1.15);}
+  .btn-secondary{width:100%;text-align:center;font-size:13px;font-weight:800;border:1.5px solid var(--c-border);color:var(--c-ink);padding:12px;border-radius:12px;cursor:pointer;}
   .btn-secondary:hover{background:#F6F8F7;}
 
   .tabs{display:flex;gap:2px;background:#EEF2F0;padding:3px;border-radius:999px;}
-  .tabs button{border:0;background:transparent;font:inherit;font-size:12px;font-weight:800;color:var(--c-muted,#5E706A);padding:6px 14px;border-radius:999px;cursor:pointer;}
-  .tabs button.active{background:#fff;color:var(--c-ink,#101714);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .tabs button{border:0;background:transparent;font:inherit;font-size:12px;font-weight:800;color:var(--c-muted);padding:6px 14px;border-radius:999px;cursor:pointer;}
+  .tabs button.active{background:#fff;color:var(--c-ink);box-shadow:0 1px 3px rgba(0,0,0,.08);}
 
-  .swtoggle{width:38px;height:22px;border-radius:99px;background:#DCE4E1;position:relative;cursor:pointer;flex:none;transition:background .15s ease;border:none;padding:0;}
-  .swtoggle::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .15s ease;box-shadow:0 1px 2px rgba(0,0,0,.2);}
-  .swtoggle.on{background:var(--c-accent,#17D97F);}
+  .swtoggle{width:38px;height:22px;border-radius:99px;background:#DCE4E1;position:relative;cursor:pointer;flex:none;transition:background .15s;border:none;padding:0;}
+  .swtoggle::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+  .swtoggle.on{background:var(--c-accent);}
   .swtoggle.on::after{transform:translateX(16px);}
 
-  .dedicated-empty{padding:32px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;}
-  .dedicated-empty .ic{width:38px;height:38px;border-radius:12px;background:#EEF2F0;margin-bottom:4px;}
-  .dedicated-empty .t{font-size:13.5px;font-weight:800;}
-  .dedicated-empty .d{font-size:12px;color:var(--c-muted,#5E706A);max-width:320px;line-height:1.55;}
-  .dedicated-empty .cta{margin-top:10px;font-size:12.5px;font-weight:800;background:var(--c-ink,#101714);color:#fff;padding:9px 16px;border-radius:999px;cursor:pointer;}
-
   [data-panel="dedicated"]{display:none;}
+
+  /* ===== Sub-screens (reached via Job cards / APIs sub-nav) ===== */
+  .subpage-head{margin-bottom:20px;}
+  .subpage-head .eyebrow{font-family:ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-muted);margin:0 0 6px;}
+  .subpage-head p{font-size:13px;color:var(--c-muted);margin:6px 0 0;max-width:600px;line-height:1.6;}
+
+  .flowbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 22px;font-family:ui-monospace,monospace;font-size:12px;}
+  .flowbar .n{padding:6px 12px;border-radius:999px;font-weight:700;}
+  .flowbar .a{color:var(--c-muted);}
+
+  .layout-2col{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;align-items:start;}
+
+  .filterrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+  .fchip{border:1px solid var(--c-border);background:var(--c-bg);font-size:12px;font-weight:700;color:var(--c-muted);padding:6px 13px;border-radius:999px;cursor:pointer;}
+  .fchip.active{background:var(--c-ink);color:#fff;border-color:var(--c-ink);}
+
+  .listrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--c-border);font-size:12.5px;cursor:pointer;}
+  .listrow:first-child{border-top:none;}
+  .listrow:hover{color:var(--c-accent-ink);}
+  .listrow .k{font-family:ui-monospace,monospace;font-size:10px;font-weight:800;color:var(--c-muted);background:#EEF2F0;padding:2px 7px;border-radius:5px;flex:none;text-transform:uppercase;}
+
+  .distbar{display:flex;height:14px;border-radius:8px;overflow:hidden;gap:2px;margin:6px 0 14px;}
+  .distbar span{display:block;height:100%;}
+  .distlegend{display:flex;flex-direction:column;gap:8px;}
+  .distlegend .row{display:flex;align-items:center;gap:8px;font-size:12.5px;}
+  .distlegend .row .sw{width:8px;height:8px;border-radius:2px;flex:none;}
+  .distlegend .row .name{flex:1;}
+  .distlegend .row .pct{font-family:ui-monospace,monospace;color:var(--c-muted);font-variant-numeric:tabular-nums;}
+
+  .timeline{display:flex;flex-direction:column;}
+  .tl-item{display:flex;gap:14px;padding:14px 0;border-top:1px solid var(--c-border);cursor:pointer;}
+  .tl-item:first-child{border-top:none;}
+  .tl-item .dotwrap{flex:none;display:flex;flex-direction:column;align-items:center;padding-top:3px;}
+  .tl-item .dotwrap .d{width:9px;height:9px;border-radius:50%;}
+  .tl-item .body{flex:1;min-width:0;}
+  .tl-item .t{font-size:13px;font-weight:700;}
+  .tl-item .d2{font-size:12px;color:var(--c-muted);margin-top:2px;font-family:ui-monospace,monospace;}
+  .tl-item .amt{flex:none;text-align:right;font-family:ui-monospace,monospace;font-size:13px;font-weight:700;}
+  .tl-item .time{flex:none;font-family:ui-monospace,monospace;font-size:11px;color:var(--c-muted);width:56px;text-align:right;}
+
+  .risk-badge{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;padding:10px 12px;border-radius:10px;margin-bottom:8px;}
+  .risk-badge.ok{background:var(--good-tint);color:var(--good);}
+  .risk-badge.watch{background:var(--warn-tint);color:var(--warn);}
+
+  .dataset-row{display:flex;align-items:center;gap:14px;padding:15px 0;border-top:1px solid var(--c-border);}
+  .dataset-row:first-child{border-top:none;}
+  .dataset-row .ic{width:34px;height:34px;border-radius:9px;background:var(--job-analyze-tint);color:var(--job-analyze);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex:none;}
+  .dataset-row .body{flex:1;min-width:0;}
+  .dataset-row .t{font-size:13.5px;font-weight:700;}
+  .dataset-row .d{font-size:12px;color:var(--c-muted);margin-top:2px;}
+  .dataset-row .actions{flex:none;display:flex;gap:6px;}
+  .btn-sm{font-size:11.5px;padding:7px 12px;border-radius:999px;font-weight:800;cursor:pointer;}
+  .btn-sm.ghost{border:1px solid var(--c-border);background:#fff;color:var(--c-ink);}
+  .btn-sm.dark{background:var(--c-ink);color:#fff;}
+
+  .schema-mono{font-family:ui-monospace,monospace;font-size:11.5px;background:#F1F3F1;border-radius:10px;padding:14px 16px;line-height:1.8;overflow-x:auto;white-space:pre;}
+  .schema-mono .c2{color:var(--c-muted);}
+
+  .api-cat{display:flex;align-items:center;gap:14px;padding:14px 0;border-top:1px solid var(--c-border);}
+  .api-cat:first-child{border-top:none;}
+  .api-cat .ic{width:34px;height:34px;border-radius:9px;background:var(--job-build-tint);color:var(--job-build);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none;}
+  .api-cat .body{flex:1;min-width:0;}
+  .api-cat .t{font-size:13.5px;font-weight:700;}
+  .api-cat .d{font-size:12px;color:var(--c-muted);margin-top:2px;}
+  .api-cat .meta{flex:none;text-align:right;font-size:11.5px;color:var(--c-muted);font-family:ui-monospace,monospace;}
+
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 20px;gap:10px;max-width:440px;margin:40px auto;}
+  .empty-state .ic{width:40px;height:40px;border-radius:12px;background:#EEF2F0;margin-bottom:4px;}
+  .empty-state h3{font-size:15.5px;margin:0;}
+  .empty-state p{font-size:12.5px;color:var(--c-muted);line-height:1.6;margin:0;}
+
+  @media (max-width:1180px){
+    .jobgrid{grid-template-columns:repeat(3,1fr);}
+    .layout-2col,.grid{grid-template-columns:1fr;}
+  }
 </style>
 </head>
 <body>
-<div class="page">
-  <div class="masthead">
-    <p class="eyebrow">Nodit Console · Product Designer 채용 과제</p>
-    <h1>Overview 화면 개선안</h1>
-    <p class="lede">
-      신규 가입 직후(사용량 0) 상태의 Overview 화면을 기준으로, 정보 위계와 온보딩 경험을
-      중심으로 재구성했습니다. 좌측 사이드바 및 콘텐츠는 실제 제품 화면을 재현한 목업이며,
-      개선 범위는 우측 메인 콘텐츠 영역입니다.
-    </p>
-  </div>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand" data-nav="overview"><span class="mark">N</span><span class="word">NODIT</span></div>
+    <div class="workspace"><span><span class="k">Workspace</span>Personal · dmddesign</span><span>›</span></div>
 
-  <div class="changelog">
-    <div><span class="num">01</span><p>프로모션 배너 2개를 히어로 위치에서 보조 컬럼의 소형 카드로 축소</p></div>
-    <div><span class="num">02</span><p>플랜·사용량·요청수를 상단 요약 스트립으로 끌어올려 스크롤 없이 확인 가능</p></div>
-    <div><span class="num">03</span><p>값이 0인 플랫라인 차트를 걷어내고 "Getting Started" 체크리스트로 대체</p></div>
-    <div><span class="num">04</span><p>업그레이드 CTA를 3곳 → 목적별 1곳으로 통합</p></div>
-  </div>
+    <nav class="navgroup">
+      <div class="label">Workspace</div>
+      <div class="navitem" data-nav="overview"><span class="ic"></span>Overview</div>
+      <div class="navitem" data-nav="placeholder" data-label="Projects"><span class="ic"></span>Projects</div>
+      <div class="navitem" data-nav="placeholder" data-label="Chains"><span class="ic"></span>Chains</div>
+      <div class="navitem" data-nav="datashare"><span class="ic"></span>Datashare<span class="beta">BETA</span></div>
+    </nav>
 
-  <p class="frame-label"><span class="dot"></span>Overview — 개선 후 (Figma 이관용 목업)</p>
-  <div class="frame-scroll">
-    <div class="console">
-      <aside class="sidebar">
-        <div class="brand"><span class="mark">N</span><span class="word">NODIT</span></div>
-        <div class="workspace"><span><span class="k">Workspace</span>Personal · dmddesign</span><span>›</span></div>
+    <nav class="navgroup">
+      <div class="label">Monitor</div>
+      <div class="navitem" data-nav="placeholder" data-label="Request Logs"><span class="ic"></span>Request Logs</div>
+      <div class="navitem" data-nav="placeholder" data-label="Webhook"><span class="ic"></span>Webhook</div>
+      <div class="navitem" data-nav="placeholder" data-label="x402 Logs"><span class="ic"></span>x402 Logs</div>
+      <div class="navitem" data-nav="placeholder" data-label="Status"><span class="ic"></span>Status</div>
+    </nav>
 
-        <nav class="navgroup">
-          <div class="label">Workspace</div>
-          <div class="navitem active"><span class="ic"></span>Overview</div>
-          <div class="navitem"><span class="ic"></span>Projects</div>
-          <div class="navitem"><span class="ic"></span>Chains</div>
-          <div class="navitem"><span class="ic"></span>Datashare<span class="beta">BETA</span></div>
-        </nav>
+    <nav class="navgroup">
+      <div class="label">Services</div>
+      <div class="navitem" data-nav="apis"><span class="ic"></span>APIs</div>
+      <div class="navsub">
+        <div class="navitem" data-nav="asset-account"><span class="ic"></span>Asset &amp; Account</div>
+        <div class="navitem" data-nav="payments-transfers"><span class="ic"></span>Payments &amp; Transfers</div>
+        <div class="navitem" data-nav="txs-provenance"><span class="ic"></span>Txs &amp; Provenance</div>
+      </div>
+    </nav>
 
-        <nav class="navgroup">
-          <div class="label">Monitor</div>
-          <div class="navitem"><span class="ic"></span>Request Logs</div>
-          <div class="navitem"><span class="ic"></span>Webhook</div>
-          <div class="navitem"><span class="ic"></span>x402 Logs</div>
-          <div class="navitem"><span class="ic"></span>Status</div>
-        </nav>
+    <nav class="navgroup" style="margin-top:auto;">
+      <div class="label">Manage</div>
+      <div class="navitem" data-nav="placeholder" data-label="Team"><span class="ic"></span>Team</div>
+      <div class="navitem" data-nav="placeholder" data-label="Billing"><span class="ic"></span>Billing</div>
+    </nav>
+  </aside>
 
-        <nav class="navgroup">
-          <div class="label">Services</div>
-          <div class="navitem"><span class="ic"></span>APIs</div>
-          <div class="navsub">
-            <div class="navitem"><span class="ic"></span>Asset &amp; Account</div>
-            <div class="navitem"><span class="ic"></span>Payments &amp; Transfers</div>
-            <div class="navitem"><span class="ic"></span>Txs &amp; Provenance</div>
+  <div class="main">
+    <div class="topbar">
+      <span class="btn-ghost" style="display:flex;align-items:center;gap:6px;">Go to Project<span style="font-size:9px;">⌄</span></span>
+      <div class="topbar-right">
+        <span style="font-size:12px;color:var(--c-muted)">Find the best plan for your business!</span>
+        <span class="btn-ghost">See Plans</span>
+        <span style="font-size:12px;color:var(--c-muted)">Docs ↗</span>
+        <div class="avatar">DD</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ============ OVERVIEW ============ -->
+      <section class="page-view active" id="pv-overview">
+        <h2>Overview</h2>
+
+        <div class="stats">
+          <div class="stat">
+            <p class="lbl">Current Plan</p>
+            <span class="chip plan">STARTER</span>
+            <p class="sub">1,000,000 CUs/day · 300 CUs/sec</p>
           </div>
-        </nav>
-
-        <nav class="navgroup" style="margin-top:auto;">
-          <div class="label">Manage</div>
-          <div class="navitem"><span class="ic"></span>Team</div>
-          <div class="navitem"><span class="ic"></span>Billing</div>
-        </nav>
-      </aside>
-
-      <div class="main">
-        <div class="topbar">
-          <span class="btn-ghost" style="display:flex;align-items:center;gap:6px;">Go to Project<span style="font-size:9px;">⌄</span></span>
-          <div class="topbar-right">
-            <span style="font-size:12px;color:var(--c-muted)">Find the best plan for your business!</span>
-            <span class="btn-ghost">See Plans</span>
-            <span style="font-size:12px;color:var(--c-muted)">Docs ↗</span>
-            <div class="avatar">DD</div>
+          <div class="stat">
+            <p class="lbl">Compute Units Today</p>
+            <span class="val">0</span><span style="font-size:12px;color:var(--c-muted)"> / 1,000,000</span>
+            <div class="track"><span style="width:0%"></span></div>
+          </div>
+          <div class="stat">
+            <p class="lbl">Requests (24h)</p>
+            <span class="val">0</span>
+            <p class="sub">0 failed</p>
+          </div>
+          <div class="stat">
+            <p class="lbl">Active Projects</p>
+            <span class="val">1</span>
+            <p class="sub"><span class="chip elastic">ELASTIC</span></p>
           </div>
         </div>
 
-        <div class="content">
-          <h2 style="margin:2px 0 -6px;">Overview</h2>
-
-          <!-- Quick stats: surfaced immediately, replaces need to scroll past banners -->
-          <div class="stats">
-            <div class="stat">
-              <p class="lbl">Current Plan</p>
-              <span class="chip plan">STARTER</span>
-              <p class="sub">1,000,000 CUs/day · 300 CUs/sec</p>
+        <div class="jobsection">
+          <div class="jobsection-head">
+            <h3>What are you here to do?</h3>
+            <span>목적에 맞는 화면으로 바로 이동합니다</span>
+          </div>
+          <div class="jobgrid">
+            <div class="jobcard build" data-nav="overview" data-scroll="getting-started">
+              <span class="tag">BUILD</span>
+              <h4>API로 서비스 연결하기</h4>
+              <p>Getting Started 체크리스트와 Project로 지금 바로 시작합니다.</p>
+              <div class="metric">0 / 4 완료</div>
+              <span class="go">Getting Started 보기 →</span>
             </div>
-            <div class="stat">
-              <p class="lbl">Compute Units Today</p>
-              <span class="val">0</span><span style="font-size:12px;color:var(--c-muted)"> / 1,000,000</span>
-              <div class="track"><span style="width:0%"></span></div>
+            <div class="jobcard operate" data-nav="payments-transfers">
+              <span class="tag">OPERATE</span>
+              <h4>입출금 상태 확인하기</h4>
+              <p>거래·이체가 정상적으로 처리되고 있는지 확인합니다.</p>
+              <div class="metric">Payments &amp; Transfers API</div>
+              <span class="go">거래 확인하기 →</span>
             </div>
-            <div class="stat">
-              <p class="lbl">Requests (24h)</p>
-              <span class="val">0</span>
-              <p class="sub">0 failed</p>
+            <div class="jobcard manage" data-nav="asset-account">
+              <span class="tag">MANAGE</span>
+              <h4>보유 자산 현황 보기</h4>
+              <p>여러 지갑·체인에 흩어진 자산을 한눈에 확인합니다.</p>
+              <div class="metric">Asset &amp; Account API</div>
+              <span class="go">자산 보기 →</span>
             </div>
-            <div class="stat">
-              <p class="lbl">Active Projects</p>
-              <span class="val">1</span>
-              <p class="sub"><span class="chip elastic">ELASTIC</span></p>
+            <div class="jobcard investigate" data-nav="txs-provenance">
+              <span class="tag">INVESTIGATE</span>
+              <h4>거래 내역 조사하기</h4>
+              <p>특정 지갑·거래의 흐름을 끝까지 추적합니다.</p>
+              <div class="metric">Txs &amp; Provenance API</div>
+              <span class="go">조사 시작하기 →</span>
+            </div>
+            <div class="jobcard analyze" data-nav="datashare">
+              <span class="tag">ANALYZE</span>
+              <h4>대규모 데이터 분석하기</h4>
+              <p>온체인 데이터를 사내 분석 환경으로 가져옵니다.</p>
+              <div class="metric">Datashare · BETA</div>
+              <span class="go">Datashare 보기 →</span>
             </div>
           </div>
+        </div>
 
-          <div class="grid">
-            <!-- Left: primary/actionable content -->
-            <div class="col">
+        <div class="grid">
+          <div class="col">
 
-              <div class="card">
-                <div class="card-h">
-                  <h3>Getting Started</h3>
-                  <span class="meta"><span id="gs-count">1</span> / 4 완료</span>
-                </div>
-                <div class="card-b">
-                  <div class="checklist" id="checklist">
-                    <div class="step done" data-step>
-                      <div class="box">✓</div>
-                      <div><div class="t">첫 프로젝트 생성</div><div class="d">My First Project · 2025-10-30</div></div>
-                    </div>
-                    <div class="step todo" data-step>
-                      <div class="box"></div>
-                      <div><div class="t">API Key 확인하기</div><div class="d">프로젝트 설정에서 발급된 키를 확인하세요</div></div>
-                      <span class="cta">View Key</span>
-                    </div>
-                    <div class="step todo" data-step>
-                      <div class="box"></div>
-                      <div><div class="t">첫 API 호출 보내기</div><div class="d">Web3 Data API로 5분 안에 첫 응답 받기</div></div>
-                      <span class="cta">Quickstart</span>
-                    </div>
-                    <div class="step todo" data-step>
-                      <div class="box"></div>
-                      <div><div class="t">팀원 초대하기</div><div class="d">Team 메뉴에서 협업자를 추가하세요</div></div>
-                    </div>
+            <div class="card" id="getting-started">
+              <div class="card-h">
+                <h3>Getting Started</h3>
+                <span class="meta"><span id="gs-count">1</span> / 4 완료</span>
+              </div>
+              <div class="card-b">
+                <div class="checklist" id="checklist">
+                  <div class="step done" data-step>
+                    <div class="box">✓</div>
+                    <div><div class="t">첫 프로젝트 생성</div><div class="d">My First Project · 2025-10-30</div></div>
+                  </div>
+                  <div class="step todo" data-step>
+                    <div class="box"></div>
+                    <div><div class="t">API Key 확인하기</div><div class="d">프로젝트 설정에서 발급된 키를 확인하세요</div></div>
+                    <span class="cta">View Key</span>
+                  </div>
+                  <div class="step todo" data-step>
+                    <div class="box"></div>
+                    <div><div class="t">첫 API 호출 보내기</div><div class="d">Web3 Data API로 5분 안에 첫 응답 받기</div></div>
+                    <span class="cta">Quickstart</span>
+                  </div>
+                  <div class="step todo" data-step>
+                    <div class="box"></div>
+                    <div><div class="t">팀원 초대하기</div><div class="d">Team 메뉴에서 협업자를 추가하세요</div></div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div class="card">
-                <div class="card-h">
-                  <h3>My Project</h3>
-                  <span class="link">Dedicated 인프라가 필요하신가요? Contact Us →</span>
-                </div>
-                <div class="card-b">
-                  <table>
-                    <thead>
-                      <tr><th>Project Name</th><th>Request (24h)</th><th>Failed (24h)</th><th>Created On</th></tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td><span class="proj-name"><span class="sw"></span>My First Project</span></td>
-                        <td class="num">0</td>
-                        <td class="num">0</td>
-                        <td class="num">2025-10-30</td>
-                      </tr>
-                    </tbody>
-                  </table>
+            <div class="card">
+              <div class="card-h">
+                <h3>My Project</h3>
+                <span class="link">Dedicated 인프라가 필요하신가요? Contact Us →</span>
+              </div>
+              <div class="card-b">
+                <table>
+                  <thead><tr><th>Project Name</th><th>Request (24h)</th><th>Failed (24h)</th><th>Created On</th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="proj-name"><span class="sw"></span>My First Project</span></td>
+                      <td class="num">0</td>
+                      <td class="num">0</td>
+                      <td class="num">2025-10-30</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h">
+                <h3>Usage Detail</h3>
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div class="tabs" id="usage-tabs">
+                    <button type="button" class="active" data-tab="elastic">Elastic</button>
+                    <button type="button" data-tab="dedicated">Dedicated</button>
+                  </div>
+                  <span class="meta" data-panel="elastic">2026-07-01 – 2026-07-29</span>
                 </div>
               </div>
-
-              <div class="card">
-                <div class="card-h">
-                  <h3>Usage Detail</h3>
-                  <div style="display:flex;align-items:center;gap:12px;">
-                    <div class="tabs" id="usage-tabs">
-                      <button type="button" class="active" data-tab="elastic">Elastic</button>
-                      <button type="button" data-tab="dedicated">Dedicated</button>
-                    </div>
-                    <span class="meta" data-panel="elastic">2026-07-01 – 2026-07-29</span>
-                  </div>
-                </div>
-                <div class="card-b">
-
-                  <div data-panel="elastic">
-                    <div class="gauge-lbl"><span class="l">Prepaid Compute Units (Daily)</span><span class="r">0 CU · 0%</span></div>
-                    <div class="track" style="height:8px;margin-top:0;"><span style="width:0%"></span></div>
-
-                    <div class="usage-row" style="margin-top:18px;">
-                      <div class="empty-mini">
-                        <div class="ic"></div>
-                        <div class="t">By Projects — 데이터 없음</div>
-                        <div class="d">첫 API 호출 이후 프로젝트별 사용량이 여기 표시됩니다</div>
-                      </div>
-                      <div class="empty-mini">
-                        <div class="ic"></div>
-                        <div class="t">By APIs — 데이터 없음</div>
-                        <div class="d">Aptos Indexer / Webhook / Stream / Web3 Data / Node API별 분포가 여기 표시됩니다</div>
-                      </div>
-                    </div>
-
-                    <div class="autoscale">
-                      <div><div class="l">Auto-Scaling</div><div class="d">사용량이 한도를 초과하면 자동으로 확장됩니다</div></div>
-                      <button type="button" class="swtoggle" id="autoscale-toggle" aria-pressed="false" aria-label="Auto-Scaling 켜기/끄기"></button>
-                    </div>
-                  </div>
-
-                  <div data-panel="dedicated">
-                    <div class="dedicated-empty">
+              <div class="card-b">
+                <div data-panel="elastic">
+                  <div class="gauge-lbl"><span class="l">Prepaid Compute Units (Daily)</span><span class="r">0 CU · 0%</span></div>
+                  <div class="track" style="height:8px;margin-top:0;"><span style="width:0%"></span></div>
+                  <div class="usage-row" style="margin-top:18px;">
+                    <div class="empty-mini">
                       <div class="ic"></div>
-                      <div class="t">아직 Dedicated 프로젝트가 없습니다</div>
-                      <div class="d">트래픽이 많거나 격리된 리소스가 필요하다면 전용 노드로 구성된 Dedicated 플랜을 문의해 보세요.</div>
-                      <span class="cta">Contact Us</span>
+                      <div class="t">By Projects — 데이터 없음</div>
+                      <div class="d">첫 API 호출 이후 프로젝트별 사용량이 여기 표시됩니다</div>
+                    </div>
+                    <div class="empty-mini">
+                      <div class="ic"></div>
+                      <div class="t">By APIs — 데이터 없음</div>
+                      <div class="d">Aptos Indexer / Webhook / Stream / Web3 Data / Node API별 분포가 여기 표시됩니다</div>
                     </div>
                   </div>
-
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Right: secondary / account rail -->
-            <div class="col">
-
-              <div class="promo">
-                <div style="display:flex;gap:6px;margin-bottom:2px;">
-                  <span style="font-size:9px;font-weight:800;letter-spacing:.04em;background:rgba(23,217,143,.18);color:var(--c-accent,#17D97F);padding:2px 7px;border-radius:999px;">0% FEE</span>
-                  <span style="font-size:9px;font-weight:800;letter-spacing:.04em;background:rgba(255,255,255,.1);color:#B7CFC4;padding:2px 7px;border-radius:999px;">ENTERPRISE</span>
-                </div>
-                <p class="k">Security</p>
-                <p class="t">Non-Custodial Solana Staking</p>
-                <p class="d">기관 표준의 보안으로 Solana를 스테이킹하세요.</p>
-                <span class="cta">Start Staking →</span>
-                <div style="display:flex;gap:5px;margin-top:14px;">
-                  <span style="width:5px;height:5px;border-radius:50%;background:var(--c-accent,#17D97F);"></span>
-                  <span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);"></span>
-                  <span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);"></span>
-                </div>
-              </div>
-
-              <div class="card">
-                <div class="card-h"><h3>My Plan</h3><span class="link">Upgrade</span></div>
-                <div class="card-b">
-                  <span class="chip plan">STARTER</span>
-                  <div style="margin-top:10px;">
-                    <div class="plan-feat"><span>CUs / day</span><span class="v">1,000,000</span></div>
-                    <div class="plan-feat"><span>Throughput</span><span class="v">300 CUs/sec</span></div>
-                    <div class="plan-feat"><span>Projects</span><span class="v">1</span></div>
+                  <div class="autoscale">
+                    <div><div class="l">Auto-Scaling</div><div class="d">사용량이 한도를 초과하면 자동으로 확장됩니다</div></div>
+                    <button type="button" class="swtoggle" id="autoscale-toggle" aria-pressed="false" aria-label="Auto-Scaling 켜기/끄기"></button>
                   </div>
-                  <div class="btn-primary">Upgrade Plan</div>
+                </div>
+                <div data-panel="dedicated" style="display:none;">
+                  <div class="empty-state" style="padding:32px 16px;margin:0;">
+                    <div class="ic"></div>
+                    <h3 style="font-size:13.5px;">아직 Dedicated 프로젝트가 없습니다</h3>
+                    <p>트래픽이 많거나 격리된 리소스가 필요하다면 전용 노드로 구성된 Dedicated 플랜을 문의해 보세요.</p>
+                    <span class="btn-sm dark" style="margin-top:6px;">Contact Us</span>
+                  </div>
                 </div>
               </div>
-
-              <div class="card">
-                <div class="card-h"><h3>Payment Details</h3></div>
-                <div class="card-b">
-                  <p style="font-size:12px;color:var(--c-muted);margin:0 0 12px;">등록된 결제 수단이 없습니다.</p>
-                  <div class="btn-secondary">+ Add Payment Method</div>
-                </div>
-              </div>
-
             </div>
+
           </div>
 
+          <div class="col">
+            <div class="promo">
+              <div style="display:flex;gap:6px;margin-bottom:2px;">
+                <span style="font-size:9px;font-weight:800;letter-spacing:.04em;background:rgba(23,217,143,.18);color:var(--c-accent);padding:2px 7px;border-radius:999px;">0% FEE</span>
+                <span style="font-size:9px;font-weight:800;letter-spacing:.04em;background:rgba(255,255,255,.1);color:#B7CFC4;padding:2px 7px;border-radius:999px;">ENTERPRISE</span>
+              </div>
+              <p class="k">Security</p>
+              <p class="t">Non-Custodial Solana Staking</p>
+              <p class="d">기관 표준의 보안으로 Solana를 스테이킹하세요.</p>
+              <span class="cta">Start Staking →</span>
+              <div style="display:flex;gap:5px;margin-top:14px;">
+                <span style="width:5px;height:5px;border-radius:50%;background:var(--c-accent);"></span>
+                <span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);"></span>
+                <span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);"></span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>My Plan</h3><span class="link">Upgrade</span></div>
+              <div class="card-b">
+                <span class="chip plan">STARTER</span>
+                <div style="margin-top:10px;">
+                  <div class="plan-feat"><span>CUs / day</span><span class="v">1,000,000</span></div>
+                  <div class="plan-feat"><span>Throughput</span><span class="v">300 CUs/sec</span></div>
+                  <div class="plan-feat"><span>Projects</span><span class="v">1</span></div>
+                </div>
+                <div class="btn-primary">Upgrade Plan</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Payment Details</h3></div>
+              <div class="card-b">
+                <p style="font-size:12px;color:var(--c-muted);margin:0 0 12px;">등록된 결제 수단이 없습니다.</p>
+                <div class="btn-secondary">+ Add Payment Method</div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
+
+      <!-- ============ APIs (catalog landing) ============ -->
+      <section class="page-view" id="pv-apis">
+        <div class="subpage-head">
+          <p class="eyebrow">Services · APIs</p>
+          <h2 style="margin-bottom:0;">APIs</h2>
+          <p>7개 체인의 데이터를 일관된 API 형태로 제공합니다. 목적에 따라 세 영역으로 나누어 두었습니다.</p>
+        </div>
+        <div class="card">
+          <div class="card-b">
+            <div class="api-cat" data-nav="asset-account">
+              <span class="ic">◆</span>
+              <div class="body"><div class="t">Asset &amp; Account</div><div class="d">Balance, token holdings, 지갑·계정 단위 자산 조회 — MANAGE 업무에 대응</div></div>
+              <span class="meta">12 endpoints</span>
+            </div>
+            <div class="api-cat" data-nav="payments-transfers">
+              <span class="ic">◆</span>
+              <div class="body"><div class="t">Payments &amp; Transfers</div><div class="d">입출금, 이체 이벤트 — OPERATE 업무에 대응</div></div>
+              <span class="meta">14 endpoints</span>
+            </div>
+            <div class="api-cat" data-nav="txs-provenance">
+              <span class="ic">◆</span>
+              <div class="body"><div class="t">Txs &amp; Provenance</div><div class="d">거래 상세, 연관 지갑, 이력 추적 — INVESTIGATE 업무에 대응</div></div>
+              <span class="meta">18 endpoints</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ MANAGE: Asset & Account ============ -->
+      <section class="page-view" id="pv-asset-account">
+        <div class="subpage-head">
+          <p class="eyebrow">APIs · Asset &amp; Account</p>
+          <h2 style="margin-bottom:0;">보유 자산 현황</h2>
+          <p>여러 지갑과 체인에 흩어진 디지털 자산을 한 화면에서 확인합니다. (MANAGE)</p>
+        </div>
+        <div class="flowbar">
+          <span class="n" style="background:var(--job-manage-tint);color:var(--job-manage);">Assets</span><span class="a">→</span>
+          <span class="n" style="background:var(--job-manage-tint);color:var(--job-manage);">Wallet</span><span class="a">→</span>
+          <span class="n" style="background:var(--job-manage-tint);color:var(--job-manage);">Chain</span><span class="a">→</span>
+          <span class="n" style="background:var(--job-manage-tint);color:var(--job-manage);">Transfer</span>
+        </div>
+        <div class="stats">
+          <div class="stat"><p class="lbl">Total Assets</p><span class="val" style="font-size:22px;">$48.2M</span><p class="sub" style="color:var(--good);">+2.4% (24h)</p></div>
+          <div class="stat"><p class="lbl">Chains</p><span class="val" style="font-size:22px;">7</span><p class="sub">tracked</p></div>
+          <div class="stat"><p class="lbl">Wallets</p><span class="val" style="font-size:22px;">24</span><p class="sub">across all chains</p></div>
+          <div class="stat"><p class="lbl">Large Transfers (24h)</p><span class="val" style="font-size:22px;">3</span><p class="sub">&gt; $100,000</p></div>
+        </div>
+        <div class="layout-2col">
+          <div class="col">
+            <div class="card">
+              <div class="card-h"><h3>Asset Distribution by Chain</h3></div>
+              <div class="card-b">
+                <div class="distbar">
+                  <span style="width:42%;background:#2a78d6;"></span>
+                  <span style="width:18%;background:#eb6834;"></span>
+                  <span style="width:15%;background:#1baf7a;"></span>
+                  <span style="width:12%;background:#c98500;"></span>
+                  <span style="width:8%;background:#c2568a;"></span>
+                  <span style="width:5%;background:#8f8a7d;"></span>
+                </div>
+                <div class="distlegend">
+                  <div class="row"><span class="sw" style="background:#2a78d6;"></span><span class="name">Ethereum</span><span class="pct">42% · $20.2M</span></div>
+                  <div class="row"><span class="sw" style="background:#eb6834;"></span><span class="name">Polygon</span><span class="pct">18% · $8.7M</span></div>
+                  <div class="row"><span class="sw" style="background:#1baf7a;"></span><span class="name">Aptos</span><span class="pct">15% · $7.2M</span></div>
+                  <div class="row"><span class="sw" style="background:#c98500;"></span><span class="name">Arbitrum</span><span class="pct">12% · $5.8M</span></div>
+                  <div class="row"><span class="sw" style="background:#c2568a;"></span><span class="name">Base</span><span class="pct">8% · $3.9M</span></div>
+                  <div class="row"><span class="sw" style="background:#8f8a7d;"></span><span class="name">Others</span><span class="pct">5% · $2.4M</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Wallets</h3><span class="meta">24 tracked</span></div>
+              <div class="card-b">
+                <table>
+                  <thead><tr><th>Wallet</th><th>Chain</th><th>Balance</th><th>Last Activity</th><th></th></tr></thead>
+                  <tbody>
+                    <tr><td>Treasury Wallet #1</td><td>Ethereum</td><td class="num">$14.1M</td><td class="num">3m ago</td><td><span class="link" data-nav="txs-provenance">Investigate →</span></td></tr>
+                    <tr><td>Treasury Wallet #2</td><td>Ethereum</td><td class="num">$9.8M</td><td class="num">12m ago</td><td><span class="link" data-nav="txs-provenance">Investigate →</span></td></tr>
+                    <tr><td>Custody Wallet #1</td><td>Polygon</td><td class="num">$8.7M</td><td class="num">1h ago</td><td><span class="link" data-nav="txs-provenance">Investigate →</span></td></tr>
+                    <tr><td>Hot Wallet</td><td>Multi-chain</td><td class="num">$4.2M</td><td class="num">3m ago</td><td><span class="link" data-nav="txs-provenance">Investigate →</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-h"><h3>Recent Large Transfers</h3></div>
+              <div class="card-b">
+                <div class="listrow" data-nav="txs-provenance"><span class="k">$412K</span><span>Treasury Wallet #1 → Hot Wallet</span></div>
+                <div class="listrow" data-nav="txs-provenance"><span class="k">$265K</span><span>Treasury Wallet #2 → 0x51fa…2201</span></div>
+                <div class="listrow" data-nav="txs-provenance"><span class="k">$148K</span><span>Custody Wallet #1 → 0x0c9d…77e4</span></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Top Holdings</h3></div>
+              <div class="card-b">
+                <div class="listrow"><span class="k">ETH</span><span>$21.4M · 44.4%</span></div>
+                <div class="listrow"><span class="k">USDC</span><span>$12.8M · 26.6%</span></div>
+                <div class="listrow"><span class="k">APT</span><span>$6.1M · 12.6%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ OPERATE: Payments & Transfers ============ -->
+      <section class="page-view" id="pv-payments-transfers">
+        <div class="subpage-head">
+          <p class="eyebrow">APIs · Payments &amp; Transfers</p>
+          <h2 style="margin-bottom:0;">입출금 · 거래 상태</h2>
+          <p>서비스에서 발생한 입출금과 거래가 정상 처리되고 있는지 확인합니다. (OPERATE)</p>
+        </div>
+        <div class="flowbar">
+          <span class="n" style="background:var(--job-operate-tint);color:var(--job-operate);">Transaction</span><span class="a">→</span>
+          <span class="n" style="background:var(--job-operate-tint);color:var(--job-operate);">Transfer</span><span class="a">→</span>
+          <span class="n" style="background:var(--job-operate-tint);color:var(--job-operate);">Wallet</span><span class="a">→</span>
+          <span class="n" style="background:var(--job-operate-tint);color:var(--job-operate);">Status</span>
+        </div>
+        <div class="stats">
+          <div class="stat"><p class="lbl">Deposits (24h)</p><span class="val" style="font-size:22px;">482</span><p class="sub" style="color:var(--good);">+41 vs yesterday</p></div>
+          <div class="stat"><p class="lbl">Withdrawals (24h)</p><span class="val" style="font-size:22px;">311</span><p class="sub">stable</p></div>
+          <div class="stat"><p class="lbl">Failed</p><span class="val" style="font-size:22px;">7</span><p class="sub" style="color:var(--crit);">+3 vs yesterday</p></div>
+          <div class="stat"><p class="lbl">Large Transactions</p><span class="val" style="font-size:22px;">4</span><p class="sub">&gt; $100,000</p></div>
+        </div>
+        <div class="layout-2col">
+          <div class="col">
+            <div class="card">
+              <div class="card-h"><h3>Recent Transactions</h3></div>
+              <div class="card-b">
+                <div class="filterrow" id="opFilters">
+                  <span class="fchip active" data-status="all">All</span>
+                  <span class="fchip" data-status="success">Success</span>
+                  <span class="fchip" data-status="processing">Processing</span>
+                  <span class="fchip" data-status="failed">Failed</span>
+                </div>
+                <table>
+                  <thead><tr><th>Status</th><th>Tx Hash</th><th>Type</th><th>Chain</th><th>Amount</th><th>Time</th></tr></thead>
+                  <tbody id="opTable">
+                    <tr class="clickable" data-status="success"><td><span class="chip good"><span class="dot"></span>Success</span></td><td class="num">0x9f2a…7cE1</td><td>Withdrawal</td><td>Ethereum</td><td class="num">12.4 ETH</td><td class="num">3m ago</td></tr>
+                    <tr class="clickable" data-status="processing"><td><span class="chip warn"><span class="dot"></span>Processing</span></td><td class="num">0x71ac…90D3</td><td>Deposit</td><td>Polygon</td><td class="num">40,000 USDC</td><td class="num">9m ago</td></tr>
+                    <tr class="clickable" data-status="success"><td><span class="chip good"><span class="dot"></span>Success</span></td><td class="num">0x2c9e…f012</td><td>Transfer</td><td>Aptos</td><td class="num">3,200 APT</td><td class="num">17m ago</td></tr>
+                    <tr class="clickable" data-status="failed"><td><span class="chip crit"><span class="dot"></span>Failed</span></td><td class="num">0x18bd…4e21</td><td>Withdrawal</td><td>Arbitrum</td><td class="num">2.1 ETH</td><td class="num">24m ago</td></tr>
+                    <tr class="clickable" data-status="success"><td><span class="chip good"><span class="dot"></span>Success</span></td><td class="num">0xd410…88ff</td><td>Deposit</td><td>Base</td><td class="num">18,500 USDC</td><td class="num">31m ago</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-h"><h3>Needs Attention</h3></div>
+              <div class="card-b">
+                <div class="listrow" data-nav="txs-provenance"><span class="k">Failed</span><span>0x18bd…4e21 · 2.1 ETH</span></div>
+                <div class="listrow" data-nav="txs-provenance"><span class="k">Processing</span><span>0x71ac…90D3 · 40,000 USDC</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ INVESTIGATE: Txs & Provenance ============ -->
+      <section class="page-view" id="pv-txs-provenance">
+        <div class="subpage-head">
+          <p class="eyebrow">APIs · Txs &amp; Provenance</p>
+          <h2 style="margin-bottom:0;">거래 · 지갑 조사</h2>
+          <p>특정 지갑이나 거래의 활동을 추적하고 검증합니다. (INVESTIGATE)</p>
+        </div>
+        <div class="flowbar">
+          <span class="n" style="background:var(--job-investigate-tint);color:var(--job-investigate);">Wallet</span><span class="a">→</span>
+          <span class="n" style="background:var(--job-investigate-tint);color:var(--job-investigate);">Transaction</span><span class="a">→</span>
+          <span class="n" style="background:var(--job-investigate-tint);color:var(--job-investigate);">Related Activity</span><span class="a">→</span>
+          <span class="n" style="background:var(--job-investigate-tint);color:var(--job-investigate);">History</span>
+        </div>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-b">
+            <input type="text" value="0x4b81…22aF" placeholder="지갑 주소 또는 트랜잭션 해시 검색…" style="width:100%;border:1.5px solid var(--c-border);background:var(--c-canvas);border-radius:12px;padding:13px 16px;font-size:13.5px;outline:none;">
+          </div>
+        </div>
+        <div class="layout-2col">
+          <div class="col">
+            <div class="card">
+              <div class="card-h"><h3>Wallet Activity — 0x4b81…22aF</h3><span class="meta">Ethereum</span></div>
+              <div class="card-b">
+                <div class="timeline">
+                  <div class="tl-item"><div class="dotwrap"><span class="d" style="background:var(--good);"></span></div><div class="body"><div class="t">Received from 0x9f2a…7cE1</div><div class="d2">Withdrawal settlement</div></div><span class="amt">+12.4 ETH</span><span class="time">3m</span></div>
+                  <div class="tl-item"><div class="dotwrap"><span class="d" style="background:var(--job-investigate);"></span></div><div class="body"><div class="t">Approval granted to Uniswap Router</div><div class="d2">Unlimited USDC allowance</div></div><span class="amt">—</span><span class="time">2h</span></div>
+                  <div class="tl-item"><div class="dotwrap"><span class="d" style="background:var(--good);"></span></div><div class="body"><div class="t">Sent to 0x71bc…d902</div><div class="d2">Transfer</div></div><span class="amt">-8,000 USDC</span><span class="time">1d</span></div>
+                  <div class="tl-item"><div class="dotwrap"><span class="d" style="background:var(--good);"></span></div><div class="body"><div class="t">Received from 0x0c9d…77e4</div><div class="d2">Transfer</div></div><span class="amt">+2.0 ETH</span><span class="time">2d</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-h"><h3>Risk Flags</h3></div>
+              <div class="card-b">
+                <div class="risk-badge watch">⚠ 신규 상대방 · 0x51fa…2201 (오늘 최초 발견)</div>
+                <div class="risk-badge watch">⚠ 임계값 초과 대규모 이체</div>
+                <div class="risk-badge ok">✓ 제재 목록 검사: 정상</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Related Addresses</h3></div>
+              <div class="card-b">
+                <div class="listrow"><span class="k">Sent to</span><span>0x71bc…d902</span></div>
+                <div class="listrow"><span class="k">Recv from</span><span>0x9f2a…7cE1</span></div>
+                <div class="listrow"><span class="k">Contract</span><span>Uniswap V3 Router</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ ANALYZE: Datashare ============ -->
+      <section class="page-view" id="pv-datashare">
+        <div class="subpage-head">
+          <p class="eyebrow">Datashare · BETA</p>
+          <h2 style="margin-bottom:0;">Datashare</h2>
+          <p>대규모 온체인 데이터를 사내 데이터 환경으로 가져옵니다. (ANALYZE)</p>
+        </div>
+        <div class="flowbar">
+          <span class="n" style="background:var(--job-analyze-tint);color:var(--job-analyze);">Dataset</span><span class="a">→</span>
+          <span class="n" style="background:var(--job-analyze-tint);color:var(--job-analyze);">Schema</span><span class="a">→</span>
+          <span class="n" style="background:var(--job-analyze-tint);color:var(--job-analyze);">Datashare</span><span class="a">→</span>
+          <span class="n" style="background:var(--job-analyze-tint);color:var(--job-analyze);">Pipeline</span>
+        </div>
+        <div class="layout-2col">
+          <div class="col">
+            <div class="card">
+              <div class="card-h"><h3>Dataset Catalog</h3><span class="meta">18 datasets</span></div>
+              <div class="card-b">
+                <div class="dataset-row"><span class="ic">DB</span><div class="body"><div class="t">Ethereum · Transactions</div><div class="d">Updated hourly · ~2.1B rows</div></div><div class="actions"><span class="btn-sm ghost">Schema</span><span class="btn-sm dark">Configure</span></div></div>
+                <div class="dataset-row"><span class="ic">DB</span><div class="body"><div class="t">Ethereum · Token Transfers</div><div class="d">Updated hourly · ~4.8B rows</div></div><div class="actions"><span class="btn-sm ghost">Schema</span><span class="btn-sm dark">Configure</span></div></div>
+                <div class="dataset-row"><span class="ic">DB</span><div class="body"><div class="t">Multi-chain · Wallet Balances</div><div class="d">Updated daily · 7 chains</div></div><div class="actions"><span class="btn-sm ghost">Schema</span><span class="btn-sm dark">Configure</span></div></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Schema — Ethereum · Token Transfers</h3></div>
+              <div class="card-b">
+                <div class="schema-mono">block_number     <span class="c2">bigint</span>
+tx_hash          <span class="c2">string</span>
+token_address    <span class="c2">string</span>
+from_address     <span class="c2">string</span>
+to_address       <span class="c2">string</span>
+value            <span class="c2">decimal(38,0)</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-b">
+                <div class="btn-primary" style="margin-top:0;">+ Configure Datashare</div>
+                <div class="btn-secondary" style="margin-top:10px;">Request New Dataset</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Data Pipelines</h3></div>
+              <div class="card-b">
+                <div class="listrow"><span class="k">Active</span><span>Snowflake</span></div>
+                <div class="listrow"><span class="k">Active</span><span>Amazon S3</span></div>
+                <div class="listrow"><span class="k">Paused</span><span>BigQuery</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PLACEHOLDER (out of prototype scope) ============ -->
+      <section class="page-view" id="pv-placeholder">
+        <div class="empty-state">
+          <div class="ic"></div>
+          <h3 id="ph-title">Coming soon</h3>
+          <p>이 화면은 이번 Overview 개선 프로토타입의 범위 밖입니다.</p>
+          <span class="btn-sm dark" data-nav="overview" style="margin-top:6px;">← Overview로 돌아가기</span>
+        </div>
+      </section>
+
     </div>
   </div>
-
-  <p class="footnote">
-    ※ 목업의 사이드바·헤더 크롬은 실제 Nodit Console 화면을 참고해 재현했으며, 개선 제안은
-    메인 콘텐츠 영역(요약 스트립 · Getting Started · Project · Usage Detail · 우측 레일)에
-    한정됩니다. 색상은 Nodit 브랜드 그린을 액센트로 유지하고, 본문은 시스템 UI 폰트,
-    수치 데이터는 tabular-nums 모노스페이스로 구분해 가독성을 높였습니다.
-  </p>
-
-  <section class="rationale">
-    <p class="eyebrow">디자인 설명</p>
-    <h2 class="section-title">문제 · 가설 · 검증 · 임팩트</h2>
-    <p class="lede">
-      결과 화면뿐 아니라 문제를 해결하는 과정을 함께 보여드리기 위해, 발견한 문제마다
-      근거 → 가설 → 가설을 증명하기 위한 검증 조건 → 기대 임팩트 순으로 정리했습니다.
-    </p>
-
-    <div class="root-cause">
-      <b>근본 문제:</b> Overview 화면의 정보 위계가 "운영 대시보드"가 아니라 "마케팅 랜딩페이지"에
-      가깝습니다. 유저가 로그인하는 목적(내 프로젝트·사용량 확인)과 화면이 가장 먼저 보여주는 것
-      (제3자 상품 광고, 업그레이드 세일즈)이 어긋나 있고, 아래 4가지 문제는 이 root cause에서 파생됩니다.
-    </div>
-
-    <div class="problem">
-      <h3><span class="pnum">01</span>프로모션 배너가 정보 위계를 압도</h3>
-      <div class="stage">
-        <span class="stage-label">문제 · 근거</span>
-        <p>1440×900 기준 최초 뷰포트에서 프로모션성 콘텐츠(Solana 배너 + Dedicated 업그레이드 배너)가
-        차지하는 세로 영역이 약 260px/900px(≈29%). 실제 유저 데이터(프로젝트 테이블, 사용량)는 이
-        아래, 스크롤해야 등장합니다.</p>
-        <p>Nielsen Norman Group의 배너 블라인드니스(F-pattern 시선추적) 연구에 따르면, 반복적으로
-        배너 형태·위치에 노출된 유저는 해당 영역을 스캔에서 자동 제외하도록 학습됩니다 — 광고 효과와
-        UX를 동시에 잃는 구조입니다.</p>
-      </div>
-      <div class="stage">
-        <span class="stage-label">가설</span>
-        <p>실사용 데이터를 최상단, 프로모션을 보조 위치로 재배치하면 (a) 핵심 정보 인지 속도가
-        빨라지고 (b) 배너 참여율은 하락하지 않거나 오히려 상승한다(블라인드니스 해소).</p>
-      </div>
-      <div class="stage">
-        <span class="stage-label">가설 검증 조건 · 데이터 근거</span>
-        <ul>
-          <li>선행 조건 — 배너 CTA 클릭 이벤트 트래킹 추가(현재 미보유 가정)</li>
-          <li>실험 설계 — 신규 가입 유저 대상 기존안(A) vs 개선안(B) 50:50 A/B, 최소 2주 수집</li>
-          <li>1차 지표 — 진입 5초 내 프로젝트/사용량 영역 도달률(세션 리플레이) — B가 A 대비 15%p↑ 필요</li>
-          <li>가드레일 — 배너 CTR이 20% 이상 하락하면 가설 기각</li>
-        </ul>
-      </div>
-      <div class="stage impact">
-        <span class="stage-label">기대 임팩트</span>
-        <p>핵심 화면 인지 시간 단축 → 온보딩 완료율 상승. 배너 CTR 유지·상승 시 마케팅 성과 지표도 개선.</p>
-      </div>
-    </div>
-
-    <div class="problem">
-      <h3><span class="pnum">02</span>핵심 정보가 스크롤 없이 확인 불가</h3>
-      <div class="stage">
-        <span class="stage-label">문제 · 근거</span>
-        <p>원본 화면 기준 Usage Overview·My Plan 섹션 도달까지 스크롤 약 3회 필요. 콘솔 로그인의
-        최빈 목적(오늘 사용량/한도 확인)이 화면에서 가장 늦게 등장하는 역설적 구조입니다.</p>
-      </div>
-      <div class="stage">
-        <span class="stage-label">가설</span>
-        <p>상단에 4개 핵심 스탯(플랜·CU 사용량·요청수·프로젝트 수) 요약 스트립을 배치하면 정보 탐색
-        시간이 단축되고 세션당 재방문 빈도가 늘어난다.</p>
-      </div>
-      <div class="stage">
-        <span class="stage-label">가설 검증 조건 · 데이터 근거</span>
-        <ul>
-          <li>선행 조건 — 세션 단위 스크롤 뎁스 트래킹 필요(현재 미보유 가정)</li>
-          <li>실험 설계 — 기존 유저 코호트 대상 개선 전/후 비교(within-subject)</li>
-          <li>지표 — Time-to-Info(로그인~핵심 지표 확인 시간), Overview 재방문 빈도(WAU/MAU)</li>
-          <li>성공 기준 — Time-to-Info 50%↑ 단축, 4주 후 WAU/MAU 5%p↑</li>
-        </ul>
-      </div>
-      <div class="stage impact">
-        <span class="stage-label">기대 임팩트</span>
-        <p>API 한도를 자주 체크하는 파워 유저의 재방문 만족도·세션 효율 개선.</p>
-      </div>
-    </div>
-
-    <div class="problem">
-      <h3><span class="pnum">03</span>빈 데이터 상태에 액션 유도 부재</h3>
-      <div class="stage">
-        <span class="stage-label">문제 · 근거</span>
-        <p>신규 유저는 항상 0 데이터로 시작(By Projects/By APIs/CU 전부 0). 프로젝트 생성일
-        (2025-10-30)은 있는데 요청은 0건 — 가입은 했지만 활성화(Activation)로 전환되지 못한
-        상태입니다. 현재 화면은 이를 의미 없는 평평한 그래프로만 보여줄 뿐 다음 행동을 알려주지
-        않습니다.</p>
-      </div>
-      <div class="stage">
-        <span class="stage-label">가설</span>
-        <p>빈 상태를 액션 유도형 "Getting Started" 체크리스트로 대체하면 신규 유저의 활성화율
-        (첫 API 호출 도달률)이 상승한다.</p>
-      </div>
-      <div class="stage">
-        <span class="stage-label">가설 검증 조건 · 데이터 근거</span>
-        <ul>
-          <li>선행 조건 — 가입~첫 호출 Funnel 이벤트(가입→프로젝트 생성→키 발급→첫 호출) 정의·로깅</li>
-          <li>실험 설계 — 가입 주차 기준 코호트 비교(최소 4주) 또는 트래픽 충분 시 A/B 병행</li>
-          <li>지표 — Activation Rate(가입 후 7일 내 첫 호출 도달률), Time to First Value</li>
-          <li>근거 — Slack·Linear 등 B2B SaaS의 체크리스트형 온보딩이 Activation Rate를 개선한 사례
-          다수 — 유사 패턴으로 채택, Nodit 자체 데이터 재검증 필요</li>
-          <li>성공 기준 — Activation Rate 10%p↑</li>
-        </ul>
-      </div>
-      <div class="stage impact">
-        <span class="stage-label">기대 임팩트</span>
-        <p>Time to First Value 단축, 활성화 유저의 무료→유료 전환 가능성 제고.</p>
-      </div>
-    </div>
-
-    <div class="problem">
-      <h3><span class="pnum">04</span>업그레이드 CTA가 3곳에 분산</h3>
-      <div class="stage">
-        <span class="stage-label">문제 · 근거</span>
-        <p>"See Plans"(헤더), "Contact Us"(Dedicated 배너), "Upgrade"(My Plan) — 동일 의도(더 많은
-        리소스 필요)의 CTA가 서로 다른 위치·문구로 3개 존재합니다. 전환 의도가 3갈래로 쪼개져 있어
-        단일 퍼널로 분석이 불가능한 구조 자체가 문제입니다.</p>
-      </div>
-      <div class="stage">
-        <span class="stage-label">가설</span>
-        <p>목적별 CTA를 1곳으로 통합(Dedicated 문의=텍스트 링크, Plan 업그레이드=My Plan 카드 버튼)
-        하면 전환 경로가 명확해져 클릭→전환율이 상승한다.</p>
-      </div>
-      <div class="stage">
-        <span class="stage-label">가설 검증 조건 · 데이터 근거</span>
-        <ul>
-          <li>선행 조건 — CTA별 클릭 + 다운스트림 전환(폼 제출, Upgrade 완료) 연결 트래킹</li>
-          <li>실험 설계 — A/B(트래픽 충분 시) 또는 전/후 비교, "클릭→전환" 퍼널 드롭오프율 비교</li>
-          <li>지표 — Click-to-Conversion Rate(CTR보다 클릭 대비 실전환율에 집중)</li>
-          <li>성공 기준 — 통합 후 전환율이 기존 3개 CTA 평균 대비 상승</li>
-        </ul>
-      </div>
-      <div class="stage impact">
-        <span class="stage-label">기대 임팩트</span>
-        <p>Sales 리드 품질 상승, 단일 CTA 지점 확보로 이후 지속적인 A/B 테스트 가능.</p>
-      </div>
-    </div>
-
-    <p class="subhead">솔루션 비교</p>
-    <p class="subhead-lede">가장 영향이 큰 두 가지 의사결정은 복수 안을 검토한 뒤 골랐습니다.</p>
-
-    <div class="cmp-wrap">
-      <table class="cmp">
-        <thead><tr><th style="width:22%">A. 빈 데이터 상태 처리</th><th>장점</th><th>단점</th></tr></thead>
-        <tbody>
-          <tr>
-            <td class="pick">① Getting Started 체크리스트</td>
-            <td>다음 액션이 구체적, 진행률(1/4) 시각화로 동기부여, 기존 데이터로 상태 판단 가능해
-            구현 난이도 낮음</td>
-            <td>활성화 완료 후 숨김 처리 로직 필요</td>
-          </tr>
-          <tr>
-            <td>② 단순 Empty State</td>
-            <td>구현 가장 간단</td>
-            <td>수동적 정보 전달에 그침, 위젯 여러 개가 동시에 비면 페이지가 허전해 보임</td>
-          </tr>
-          <tr>
-            <td>③ 데모/프리뷰 데이터</td>
-            <td>데이터가 쌓였을 때의 모습을 미리 보여줌</td>
-            <td>"가짜 데이터"임을 명확히 표기 안 하면 실데이터로 오인 위험 — 온체인 데이터 특성상
-            신뢰 이슈로 치명적</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="cmp-wrap">
-      <table class="cmp">
-        <thead><tr><th style="width:22%">B. 프로모션 배너 위치</th><th>장점</th><th>단점</th></tr></thead>
-        <tbody>
-          <tr>
-            <td class="pick">① 우측 보조 레일로 축소</td>
-            <td>노출은 유지하면서 위계는 부차적으로 조정 — 비즈니스 요구와 유저 경험 절충</td>
-            <td>여전히 일부 공간 차지</td>
-          </tr>
-          <tr>
-            <td>② 완전 제거</td>
-            <td>가장 깔끔한 데이터 중심 화면</td>
-            <td>신규 상품 홍보 니즈 미충족 — 실무에서 반려 가능성 높음</td>
-          </tr>
-          <tr>
-            <td>③ 별도 Discover 페이지 분리</td>
-            <td>Overview를 순수 상태 대시보드로 완전 분리, 확장성 좋음</td>
-            <td>IA 변경 필요 — 이번 과제 범위(Overview 화면)를 벗어남</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
 </div>
 
 <script>
-  // Getting Started checklist — click a step to toggle done/todo
+(function(){
+  var views = document.querySelectorAll('.page-view');
+  var navItems = document.querySelectorAll('[data-nav]');
+
+  function show(name, opts){
+    opts = opts || {};
+    views.forEach(function(v){ v.classList.toggle('active', v.id === 'pv-' + name); });
+    document.querySelectorAll('.navitem').forEach(function(el){
+      el.classList.toggle('active', el.getAttribute('data-nav') === name);
+    });
+    if (name === 'placeholder' && opts.label){
+      document.getElementById('ph-title').textContent = opts.label;
+    }
+    document.querySelector('.content').scrollTop = 0;
+    if (opts.scrollTo){
+      window.setTimeout(function(){
+        var t = document.getElementById(opts.scrollTo);
+        if (t) t.scrollIntoView({block:'start', behavior:'smooth'});
+      }, 30);
+    }
+  }
+
+  navItems.forEach(function(el){
+    el.addEventListener('click', function(){
+      var name = el.getAttribute('data-nav');
+      var label = el.getAttribute('data-label');
+      var scrollTo = el.getAttribute('data-scroll');
+      show(name, {label: label, scrollTo: scrollTo});
+    });
+  });
+
+  // Getting Started checklist toggle
   var steps = document.querySelectorAll('#checklist [data-step]');
   var countEl = document.getElementById('gs-count');
   function updateCount(){
@@ -755,17 +843,16 @@
     if (countEl) countEl.textContent = done;
   }
   steps.forEach(function(step){
-    step.addEventListener('click', function(e){
+    step.addEventListener('click', function(){
       var isDone = step.classList.contains('done');
       step.classList.toggle('done', !isDone);
       step.classList.toggle('todo', isDone);
-      var box = step.querySelector('.box');
-      box.textContent = isDone ? '' : '✓';
+      step.querySelector('.box').textContent = isDone ? '' : '✓';
       updateCount();
     });
   });
 
-  // Usage Detail — Elastic / Dedicated tabs
+  // Usage Detail tabs
   var tabBtns = document.querySelectorAll('#usage-tabs button');
   tabBtns.forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -786,6 +873,22 @@
       asToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
   }
+
+  // Operate status filter
+  var opFilters = document.getElementById('opFilters');
+  if (opFilters){
+    opFilters.querySelectorAll('.fchip').forEach(function(chip){
+      chip.addEventListener('click', function(){
+        opFilters.querySelectorAll('.fchip').forEach(function(c){ c.classList.remove('active'); });
+        chip.classList.add('active');
+        var status = chip.getAttribute('data-status');
+        document.querySelectorAll('#opTable tr').forEach(function(row){
+          row.style.display = (status === 'all' || row.getAttribute('data-status') === status) ? '' : 'none';
+        });
+      });
+    });
+  }
+})();
 </script>
 </body>
 </html>
