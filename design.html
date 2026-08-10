@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nodit Console Overview — 개선 제안</title>
+<meta name="description" content="Nodit Console Overview 화면의 문제 분석과 Job 기반 진입점 개선 제안 — 리서치부터 검증 계획까지">
+<style>
+  :root{
+    --paper:#F7F6F1; --paper-dim:#EFEDE5; --ink:#14170F; --muted:#6E6C60; --line:#DDDACC;
+    --accent:#17D97F; --accent-deep:#0A6B3D; --accent-tint:#E7F8EF;
+    --job-build:#1D5FB0; --job-build-tint:#E9F1FC;
+    --job-operate:#B8501F; --job-operate-tint:#FCEEE6;
+    --job-manage:#0A7A46; --job-manage-tint:#E8FAF1;
+    --job-investigate:#4A3AA7; --job-investigate-tint:#EFEDFA;
+    --job-analyze:#0C7A72; --job-analyze-tint:#E3F5F3;
+    --good:#0ca30c; --warn:#b8790c; --crit:#c23a3a;
+    --mono: ui-monospace,"SF Mono","Cascadia Mono",Menlo,monospace;
+    --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    --shadow: 0 1px 2px rgba(20,23,15,.04), 0 14px 32px -20px rgba(20,23,15,.22);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --paper:#111309; --paper-dim:#171A10; --ink:#F1F0E6; --muted:#9B9887; --line:#2B2E22;
+      --accent-tint:#11291C;
+      --job-build:#5D9BEA; --job-build-tint:#152537;
+      --job-operate:#E27F45; --job-operate-tint:#301E12;
+      --job-manage:#3EF0A0; --job-manage-tint:#0F2A1C;
+      --job-investigate:#9A8BE6; --job-investigate-tint:#211C36;
+      --job-analyze:#4FC9BE; --job-analyze-tint:#0F2925;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 14px 32px -18px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --paper:#111309; --paper-dim:#171A10; --ink:#F1F0E6; --muted:#9B9887; --line:#2B2E22;
+    --accent-tint:#11291C;
+    --job-build:#5D9BEA; --job-build-tint:#152537;
+    --job-operate:#E27F45; --job-operate-tint:#301E12;
+    --job-manage:#3EF0A0; --job-manage-tint:#0F2A1C;
+    --job-investigate:#9A8BE6; --job-investigate-tint:#211C36;
+    --job-analyze:#4FC9BE; --job-analyze-tint:#0F2925;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 14px 32px -18px rgba(0,0,0,.55);
+  }
+  :root[data-theme="light"]{ color-scheme: light; }
+
+  *{box-sizing:border-box;}
+  html{scroll-snap-type:y mandatory; overflow-x:hidden;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent); color:#06331F; }
+
+  .slide{
+    min-height:100vh; scroll-snap-align:start; scroll-snap-stop:always;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:64px 8vw 88px; position:relative; border-bottom:1px solid var(--line);
+  }
+  .slide-inner{max-width:960px; margin:0 auto; width:100%;}
+  .slide-tag{
+    font-family:var(--mono); font-size:11.5px; font-weight:600; letter-spacing:.06em;
+    color:var(--muted); text-transform:uppercase; margin:0 0 18px; display:flex; align-items:center; gap:10px;
+  }
+  .slide-tag .n{color:var(--accent-deep); font-weight:800;}
+  @media (prefers-color-scheme:dark){ .slide-tag .n{color:var(--accent);} }
+  :root[data-theme="dark"] .slide-tag .n{color:var(--accent);}
+  h2.slide-title{font-size:32px; line-height:1.24; font-weight:800; letter-spacing:-.015em; margin:0 0 16px; text-wrap:balance;}
+  .slide-lede{font-size:16px; line-height:1.7; color:var(--muted); max-width:600px; margin:0 0 8px;}
+  .foot{position:absolute; left:8vw; bottom:34px; font-family:var(--mono); font-size:11px; color:var(--muted);}
+
+  /* Cover */
+  .cover{justify-content:center;}
+  .cover .wordmark{display:flex; align-items:center; gap:10px; margin-bottom:36px;}
+  .cover .mark{width:30px;height:30px;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#06331F;}
+  .cover .word{font-size:15px;font-weight:800;letter-spacing:.01em;}
+  .cover h1{font-size:54px;line-height:1.14;font-weight:800;letter-spacing:-.025em;margin:0 0 22px;max-width:760px;text-wrap:balance;}
+  .cover .sub{font-size:17px;line-height:1.65;color:var(--muted);max-width:560px;margin:0;}
+  .scrolldown{position:absolute;right:8vw;bottom:40px;font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;align-items:center;gap:8px;}
+  .scrolldown .arrow{animation:bob 1.6s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+  @media (prefers-reduced-motion:reduce){ .scrolldown .arrow{animation:none;} }
+
+  /* Nav */
+  .navdots{position:fixed; right:22px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:10px; z-index:20;}
+  .navdots button{width:7px;height:7px;border-radius:50%;border:none;background:var(--line);padding:0;cursor:pointer;transition:background .15s,transform .15s;}
+  .navdots button.active{background:var(--accent-deep);transform:scale(1.5);}
+  @media (prefers-color-scheme:dark){ .navdots button.active{background:var(--accent);} }
+  :root[data-theme="dark"] .navdots button.active{background:var(--accent);}
+  .counter{position:fixed; left:22px; bottom:22px; font-family:var(--mono); font-size:11px; color:var(--muted); z-index:20; background:var(--paper); padding:4px 8px;}
+
+  /* Problem cards */
+  .pgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:28px;}
+  .pcard{background:var(--paper-dim); border:1px solid var(--line); border-radius:14px; padding:20px 22px;}
+  .pcard .t{font-size:15px; font-weight:800; margin:0 0 8px;}
+  .pcard .d{font-size:13.5px; color:var(--muted); line-height:1.6; margin:0;}
+
+  /* Job pills row */
+  .jobrow{display:flex; flex-wrap:wrap; gap:8px; margin:22px 0;}
+  .jobpill{font-family:var(--mono); font-size:12px; font-weight:800; padding:8px 14px; border-radius:999px;}
+  .jobpill.build{background:var(--job-build-tint); color:var(--job-build);}
+  .jobpill.operate{background:var(--job-operate-tint); color:var(--job-operate);}
+  .jobpill.manage{background:var(--job-manage-tint); color:var(--job-manage);}
+  .jobpill.investigate{background:var(--job-investigate-tint); color:var(--job-investigate);}
+  .jobpill.analyze{background:var(--job-analyze-tint); color:var(--job-analyze);}
+
+  .callout{background:var(--accent-tint); border-radius:14px; padding:20px 24px; margin-top:8px; font-size:14.5px; line-height:1.75;}
+  .callout b{color:var(--accent-deep);}
+  @media (prefers-color-scheme:dark){ .callout b{color:var(--accent);} }
+  :root[data-theme="dark"] .callout b{color:var(--accent);}
+
+  /* Matrix table */
+  .matrix-wrap{overflow-x:auto; margin-top:24px; border:1px solid var(--line); border-radius:14px;}
+  table.matrix{border-collapse:collapse; width:100%; min-width:880px; font-size:13px;}
+  table.matrix th{text-align:left; font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); padding:12px 16px; border-bottom:1px solid var(--line); background:var(--paper-dim);}
+  table.matrix td{padding:14px 16px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.55;}
+  table.matrix tr:last-child td{border-bottom:none;}
+  .job-pill{display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:800; padding:4px 10px 4px 8px; border-radius:999px;}
+  .job-pill .dot{width:6px;height:6px;border-radius:50%;}
+  .job-pill.build{background:var(--job-build-tint); color:var(--job-build);}
+  .job-pill.operate{background:var(--job-operate-tint); color:var(--job-operate);}
+  .job-pill.manage{background:var(--job-manage-tint); color:var(--job-manage);}
+  .job-pill.investigate{background:var(--job-investigate-tint); color:var(--job-investigate);}
+  .job-pill.analyze{background:var(--job-analyze-tint); color:var(--job-analyze);}
+  .job-pill.build .dot{background:var(--job-build);} .job-pill.operate .dot{background:var(--job-operate);}
+  .job-pill.manage .dot{background:var(--job-manage);} .job-pill.investigate .dot{background:var(--job-investigate);}
+  .job-pill.analyze .dot{background:var(--job-analyze);}
+  .flow-mini{font-family:var(--mono); font-size:11.5px; color:var(--muted);}
+
+  /* Diagram */
+  .diagram-frame{background:var(--paper-dim); border:1px solid var(--line); border-radius:16px; padding:20px 12px; margin-top:22px; overflow-x:auto;}
+  .mermaid{margin:0; min-width:720px; display:flex; justify-content:center;}
+  .diagram-note{font-size:13px; color:var(--muted); margin-top:12px; line-height:1.65;}
+  .mermaid text, .mermaid .label, .mermaid .nodeLabel{ clip-path:none !important; }
+  .mermaid .node rect{ overflow:visible; }
+
+  /* Hypothesis */
+  .hyp{background:var(--paper-dim); border:1px solid var(--line); border-radius:16px; padding:22px 24px; margin-bottom:14px;}
+  .hyp h3{margin:0 0 12px; font-size:15px; font-weight:800;}
+  .hyp .row{display:flex; gap:16px; padding:9px 0; border-top:1px solid var(--line); font-size:13px; line-height:1.6;}
+  .hyp .row:first-of-type{border-top:none; padding-top:0;}
+  .hyp .row .k{flex:none; width:76px; font-family:var(--mono); font-size:10.5px; font-weight:800; color:var(--muted); text-transform:uppercase; padding-top:1px;}
+
+  /* Closing */
+  .keywordrow{display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 10px;}
+  .kw{font-family:var(--mono); font-size:11.5px; font-weight:700; padding:6px 12px; border-radius:999px; background:var(--accent-tint); color:var(--accent-deep);}
+  @media (prefers-color-scheme:dark){ .kw{color:var(--accent);} }
+  :root[data-theme="dark"] .kw{color:var(--accent);}
+  .refnote{font-size:12.5px; color:var(--muted); line-height:1.6; margin:0 0 26px;}
+
+  .sitemap{display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin-top:6px;}
+  .site-tile{border-radius:12px; padding:16px 14px; min-height:92px; display:flex; flex-direction:column; justify-content:space-between; border:1px solid var(--line);}
+  .site-tile .t{font-family:var(--mono); font-size:10px; font-weight:800; letter-spacing:.04em; text-transform:uppercase;}
+  .site-tile .d{font-size:11.5px; line-height:1.4; color:var(--muted); margin-top:8px;}
+  .site-tile.overview{background:var(--paper-dim);}
+  .site-tile.build{background:var(--job-build-tint);} .site-tile.build .t{color:var(--job-build);}
+  .site-tile.operate{background:var(--job-operate-tint);} .site-tile.operate .t{color:var(--job-operate);}
+  .site-tile.manage{background:var(--job-manage-tint);} .site-tile.manage .t{color:var(--job-manage);}
+  .site-tile.investigate{background:var(--job-investigate-tint);} .site-tile.investigate .t{color:var(--job-investigate);}
+  .site-tile.analyze{background:var(--job-analyze-tint);} .site-tile.analyze .t{color:var(--job-analyze);}
+
+  .linkrow{display:flex; gap:12px; margin-top:30px; flex-wrap:wrap;}
+  .linkrow a{font-size:13.5px; font-weight:800; text-decoration:none; padding:12px 20px; border-radius:999px; display:inline-flex; align-items:center; gap:8px;}
+  .linkrow a.primary{background:var(--ink); color:var(--paper);}
+  .linkrow a.secondary{border:1.5px solid var(--line); color:var(--ink);}
+  @media (prefers-color-scheme:dark){ .linkrow a.primary{background:var(--accent); color:#06331F;} }
+  :root[data-theme="dark"] .linkrow a.primary{background:var(--accent); color:#06331F;}
+
+  @media (max-width:860px){
+    .pgrid{grid-template-columns:1fr;}
+    .sitemap{grid-template-columns:repeat(3,1fr);}
+    .cover h1{font-size:36px;}
+    h2.slide-title{font-size:26px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="navdots" id="navdots"></div>
+<div class="counter" id="counter">01 / 08</div>
+
+<!-- 01 COVER -->
+<section class="slide cover" id="s1">
+  <div class="slide-inner">
+    <div class="wordmark"><span class="mark">N</span><span class="word">NODIT</span></div>
+    <h1>Overview 화면을,<br>모두의 첫 화면으로</h1>
+    <p class="sub">Nodit Console에 로그인하는 목적은 사람마다 다릅니다. 그 사실에서 출발한 Overview 화면
+    개선 제안과, 제안에 이르기까지의 리서치 과정을 담았습니다.</p>
+  </div>
+  <div class="scrolldown">Scroll<span class="arrow">↓</span></div>
+</section>
+
+<!-- 02 PROBLEM -->
+<section class="slide" id="s2">
+  <div class="slide-inner">
+    <p class="slide-tag"><span class="n">01</span>문제 정의</p>
+    <h2 class="slide-title">지금 Overview 화면의 문제</h2>
+    <p class="slide-lede">로그인 직후 가장 먼저 보이는 화면인데도, 정작 사용자가 확인하고 싶은 정보는
+    뒤로 밀려 있습니다.</p>
+    <div class="pgrid">
+      <div class="pcard"><p class="t">프로모션 배너가 최우선</p><p class="d">광고 배너 2개가 첫 화면의 약 30%를 차지합니다. 실제 사용 데이터는 그 아래, 스크롤해야 나타납니다.</p></div>
+      <div class="pcard"><p class="t">핵심 정보는 스크롤 이후</p><p class="d">플랜, 사용량, 요청 수처럼 가장 자주 확인하는 정보를 보려면 평균 3번 스크롤해야 합니다.</p></div>
+      <div class="pcard"><p class="t">텅 빈 첫 화면</p><p class="d">신규 가입자는 항상 0으로 채워진 그래프만 보게 되고, 다음에 무엇을 해야 하는지 안내받지 못합니다.</p></div>
+      <div class="pcard"><p class="t">흩어진 업그레이드 버튼</p><p class="d">같은 목적(더 많은 리소스 필요)의 버튼이 See Plans, Contact Us, Upgrade 세 군데에 따로 놓여 있습니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 DIRECTION -->
+<section class="slide" id="s3">
+  <div class="slide-inner">
+    <p class="slide-tag"><span class="n">02</span>제안 방향</p>
+    <h2 class="slide-title">Overview를 &ldquo;진입점&rdquo;으로 다시 그렸습니다</h2>
+    <p class="slide-lede">Nodit을 쓰는 사람은 개발자만이 아닙니다. Treasury, Operations, Compliance,
+    Data팀까지 — 서로 다른 다섯 가지 목적이 하나의 콘솔을 함께 사용합니다. Overview는 이 목적들을
+    가장 먼저 보여주는 화면이어야 한다고 생각했습니다.</p>
+    <div class="jobrow">
+      <span class="jobpill build">BUILD · 개발</span>
+      <span class="jobpill operate">OPERATE · 운영</span>
+      <span class="jobpill manage">MANAGE · 자산관리</span>
+      <span class="jobpill investigate">INVESTIGATE · 조사</span>
+      <span class="jobpill analyze">ANALYZE · 분석</span>
+    </div>
+    <div class="callout">
+      직군마다 화면을 따로 만드는 방법도 검토했습니다. 하지만 Wallet, Transaction, Asset 같은 데이터는
+      다섯 가지 목적이 <b>모두 함께 참조하는 데이터</b>였습니다. 그래서 화면을 나누는 대신, 하나의
+      Overview 안에 다섯 개의 입구를 두는 방법을 선택했습니다.
+    </div>
+  </div>
+</section>
+
+<!-- 04 MATRIX -->
+<section class="slide" id="s4">
+  <div class="slide-inner">
+    <p class="slide-tag"><span class="n">03</span>사용자와 목적</p>
+    <h2 class="slide-title">다섯 가지 목적, 다섯 가지 시작점</h2>
+    <p class="slide-lede">직무 이름이 아니라 &ldquo;무엇을 하려고 왔는가&rdquo;를 기준으로 정리했습니다.</p>
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead><tr><th style="width:13%">Job</th><th style="width:17%">사용자</th><th style="width:22%">목표</th><th style="width:20%">핵심 데이터</th><th>대표 흐름</th></tr></thead>
+        <tbody>
+          <tr><td><span class="job-pill build"><span class="dot"></span>BUILD</span></td><td>Web3 Developer · CTO</td><td>API·Node로 서비스에 온체인 데이터 연결</td><td>API, Key, Usage</td><td class="flow-mini">API → Project → Key → Webhook</td></tr>
+          <tr><td><span class="job-pill operate"><span class="dot"></span>OPERATE</span></td><td>거래소·Custody Operations</td><td>입출금·거래 상태 확인</td><td>Transaction, Transfer</td><td class="flow-mini">Transaction → Transfer → Wallet</td></tr>
+          <tr><td><span class="job-pill manage"><span class="dot"></span>MANAGE</span></td><td>Treasury · Finance</td><td>보유 자산 현황 파악</td><td>Balance, Portfolio</td><td class="flow-mini">Assets → Wallet → Chain</td></tr>
+          <tr><td><span class="job-pill investigate"><span class="dot"></span>INVESTIGATE</span></td><td>Compliance · Risk</td><td>지갑·거래 활동 추적</td><td>Wallet Activity, History</td><td class="flow-mini">Wallet → Transaction → History</td></tr>
+          <tr><td><span class="job-pill analyze"><span class="dot"></span>ANALYZE</span></td><td>Data Analyst · BI</td><td>대규모 데이터를 사내에서 분석</td><td>Dataset, Schema</td><td class="flow-mini">Dataset → Datashare → Pipeline</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 05 IA -->
+<section class="slide" id="s5">
+  <div class="slide-inner">
+    <p class="slide-tag"><span class="n">04</span>정보 구조</p>
+    <h2 class="slide-title">목적(Job)과 관리(Admin)를 분리했습니다</h2>
+    <p class="slide-lede">Build·Operate·Manage·Investigate·Analyze는 업무 목적이고, Project·API Key·
+    Billing·Team은 제품 관리입니다. 두 축을 같은 depth에 섞지 않았습니다.</p>
+    <div class="diagram-frame">
+<pre class="mermaid">
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#F7F6F1','primaryTextColor':'#14170F','primaryBorderColor':'#DDDACC','lineColor':'#9B9887','fontFamily':'trebuchet ms,arial,sans-serif','fontSize':'14px'}, 'flowchart': {'htmlLabels': false, 'useMaxWidth': false, 'nodeSpacing': 45, 'rankSpacing': 55}}%%
+graph TD
+  ROOT["NODIT<br/>Overview"]
+  ROOT --> BUILD["BUILD"]
+  ROOT --> OPERATE["OPERATE"]
+  ROOT --> MANAGE["MANAGE"]
+  ROOT --> INVESTIGATE["INVESTIGATE"]
+  ROOT --> ANALYZE["ANALYZE"]
+  ROOT -.분리.-> ADMIN["Workspace/Admin"]
+
+  BUILD --> B1["APIs"]
+  BUILD --> B2["Nodes"]
+  BUILD --> B3["Webhooks"]
+
+  OPERATE --> O1["Tx"]
+  OPERATE --> O2["Transfer"]
+  OPERATE --> O3["Activity"]
+
+  MANAGE --> M1["Assets"]
+  MANAGE --> M2["Wallets"]
+  MANAGE --> M3["Portfolio"]
+
+  INVESTIGATE --> I1["Search"]
+  INVESTIGATE --> I2["Transactions"]
+  INVESTIGATE --> I3["Risk/Compliance"]
+
+  ANALYZE --> A1["Datashare"]
+  ANALYZE --> A2["Datasets"]
+
+  ADMIN --> W1["Projects"]
+  ADMIN --> W2["API Keys"]
+  ADMIN --> W3["Usage/Team/Billing"]
+
+  classDef build fill:#E9F1FC,stroke:#1D5FB0,color:#1D5FB0;
+  classDef operate fill:#FCEEE6,stroke:#B8501F,color:#B8501F;
+  classDef manage fill:#E8FAF1,stroke:#0A7A46,color:#0A7A46;
+  classDef investigate fill:#EFEDFA,stroke:#4A3AA7,color:#4A3AA7;
+  classDef analyze fill:#E3F5F3,stroke:#0C7A72,color:#0C7A72;
+  classDef admin fill:#EFEDE5,stroke:#9B9887,color:#6E6C60;
+  class BUILD,B1,B2,B3 build;
+  class OPERATE,O1,O2,O3 operate;
+  class MANAGE,M1,M2,M3 manage;
+  class INVESTIGATE,I1,I2,I3 investigate;
+  class ANALYZE,A1,A2 analyze;
+  class ADMIN,W1,W2,W3 admin;
+</pre>
+    </div>
+    <p class="diagram-note">사이드바에는 이 구조를 그대로 옮기지 않았습니다. Overview는 구조를 이해시키는
+    화면이고, 사이드바는 그 다음의 반복적인 탐색을 위한 화면이기 때문입니다.</p>
+  </div>
+</section>
+
+<!-- 06 SHARED SPINE -->
+<section class="slide" id="s6">
+  <div class="slide-inner">
+    <p class="slide-tag"><span class="n">05</span>연결된 데이터</p>
+    <h2 class="slide-title">다섯 개의 화면은, 결국 같은 데이터를 봅니다</h2>
+    <p class="slide-lede">Wallet, Transaction, Transfer, Asset — 이 네 가지가 다섯 가지 목적을 모두
+    연결합니다. Overview를 하나로 유지한 이유입니다.</p>
+    <div class="diagram-frame">
+<pre class="mermaid">
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#F7F6F1','primaryTextColor':'#14170F','primaryBorderColor':'#DDDACC','lineColor':'#9B9887','fontFamily':'trebuchet ms,arial,sans-serif','fontSize':'14px'}, 'flowchart': {'htmlLabels': false, 'useMaxWidth': false, 'nodeSpacing': 45, 'rankSpacing': 55}}%%
+graph LR
+  WALLET[("Wallet")] --- TX[("Transaction")] --- TRANSFER[("Transfer")] --- ASSET[("Asset")]
+
+  WALLET -.제공.-> BUILD["BUILD<br/>Account API"]
+  TX -.내보내기.-> ANALYZE["ANALYZE<br/>Dataset"]
+  TX -.상태 확인.-> OPERATE["OPERATE<br/>Tx / Transfer"]
+  TRANSFER -.이동 추적.-> MANAGE["MANAGE<br/>Asset Movement"]
+  WALLET -.활동 추적.-> INVESTIGATE["INVESTIGATE<br/>Wallet Activity"]
+  TX -.연관 조사.-> INVESTIGATE
+
+  classDef spine fill:#EFEDE5,stroke:#9B9887,color:#14170F;
+  classDef build fill:#E9F1FC,stroke:#1D5FB0,color:#1D5FB0;
+  classDef operate fill:#FCEEE6,stroke:#B8501F,color:#B8501F;
+  classDef manage fill:#E8FAF1,stroke:#0A7A46,color:#0A7A46;
+  classDef investigate fill:#EFEDFA,stroke:#4A3AA7,color:#4A3AA7;
+  classDef analyze fill:#E3F5F3,stroke:#0C7A72,color:#0C7A72;
+  class WALLET,TX,TRANSFER,ASSET spine;
+  class BUILD build;
+  class OPERATE operate;
+  class MANAGE manage;
+  class INVESTIGATE investigate;
+  class ANALYZE analyze;
+</pre>
+    </div>
+    <p class="diagram-note">예를 들어 Treasury가 화면에서 비정상적으로 큰 이체를 발견하면, 같은 화면 안에서
+    바로 Investigate로 이어서 조사할 수 있습니다. Job 간 경계에서 흐름이 끊기지 않도록 하는 것이
+    이번 설계의 핵심입니다.</p>
+  </div>
+</section>
+
+<!-- 07 HYPOTHESIS -->
+<section class="slide" id="s7">
+  <div class="slide-inner">
+    <p class="slide-tag"><span class="n">06</span>가설과 검증</p>
+    <h2 class="slide-title">가설로 남겨, 검증할 수 있게 했습니다</h2>
+    <div class="hyp">
+      <h3>H1 · Job 기반 진입점은 발견 가능성을 높입니다</h3>
+      <div class="row"><span class="k">가설</span><span>사이드바를 기능명 대신 목적(Job)으로 구성하면, 비개발 직군도 원하는 화면을 더 빠르게 찾을 수 있습니다.</span></div>
+      <div class="row"><span class="k">검증 방법</span><span>직군별로 같은 과제를 주고, 원하는 화면을 찾기까지 걸리는 시간과 정확도를 기존 화면과 비교합니다.</span></div>
+      <div class="row"><span class="k">성공 기준</span><span>5개 직군 평균 10초 이내 도달, 정확도 80% 이상.</span></div>
+    </div>
+    <div class="hyp">
+      <h3>H2 · 공유 데이터 구조는 Job 간 이동을 더 쉽게 만듭니다</h3>
+      <div class="row"><span class="k">가설</span><span>Wallet·Transaction 같은 공통 데이터를 중심에 두면, 한 화면에서 발견한 이슈를 다른 화면에서 바로 이어 조사할 수 있습니다.</span></div>
+      <div class="row"><span class="k">검증 방법</span><span>Job 간 이동 버튼의 클릭률과, 클릭 이후 조사 완료율을 추적합니다.</span></div>
+      <div class="row"><span class="k">성공 기준</span><span>클릭 후 세션 내 완료율 60% 이상.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 CLOSING -->
+<section class="slide" id="s8">
+  <div class="slide-inner">
+    <p class="slide-tag"><span class="n">07</span>다음 화면</p>
+    <h2 class="slide-title">Overview 1개, 목적별 화면 5개</h2>
+    <p class="slide-lede">Stripe, Linear, Datadog 같은 제품의 톤을 참고하되, Nodit 브랜드 그린을 유일한
+    액센트로 유지했습니다.</p>
+    <div class="keywordrow">
+      <span class="kw">Precise</span><span class="kw">Technical</span><span class="kw">Trustworthy</span><span class="kw">Structured</span><span class="kw">Calm</span>
+    </div>
+    <div class="sitemap">
+      <div class="site-tile overview"><div class="t">Overview</div><div class="d">공통 진입 허브</div></div>
+      <div class="site-tile build"><div class="t">Build</div><div class="d">API · Key · Webhook</div></div>
+      <div class="site-tile operate"><div class="t">Operate</div><div class="d">Transaction 대시보드</div></div>
+      <div class="site-tile manage"><div class="t">Manage</div><div class="d">자산 · 지갑 현황</div></div>
+      <div class="site-tile investigate"><div class="t">Investigate</div><div class="d">지갑 · 거래 조사</div></div>
+      <div class="site-tile analyze"><div class="t">Analyze</div><div class="d">Datashare · Dataset</div></div>
+    </div>
+    <div class="linkrow">
+      <a class="primary" href="https://jelincc.github.io/NODIT/" target="_blank" rel="noopener">프로토타입 열기 ↗</a>
+      <a class="secondary" href="https://github.com/jelincc/NODIT" target="_blank" rel="noopener">GitHub 저장소 ↗</a>
+    </div>
+  </div>
+  <div class="foot">Nodit Console Overview 개선 제안</div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'base', flowchart: { htmlLabels: false, useMaxWidth: false } });
+</script>
+<script>
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var dotsWrap = document.getElementById('navdots');
+  var counter = document.getElementById('counter');
+  slides.forEach(function(s, i){
+    var b = document.createElement('button');
+    b.setAttribute('aria-label', 'Slide ' + (i+1));
+    b.addEventListener('click', function(){ s.scrollIntoView({behavior:'smooth'}); });
+    dotsWrap.appendChild(b);
+  });
+  var dots = Array.prototype.slice.call(dotsWrap.children);
+
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
+  function setActive(idx){
+    dots.forEach(function(d, i){ d.classList.toggle('active', i === idx); });
+    counter.textContent = pad(idx + 1) + ' / ' + pad(slides.length);
+  }
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){
+        var idx = slides.indexOf(e.target);
+        if (idx > -1) setActive(idx);
+      }
+    });
+  }, { threshold: 0.6 });
+  slides.forEach(function(s){ io.observe(s); });
+
+  document.addEventListener('keydown', function(e){
+    var cur = dots.findIndex(function(d){ return d.classList.contains('active'); });
+    if (cur === -1) cur = 0;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' '){
+      e.preventDefault();
+      var next = Math.min(cur + 1, slides.length - 1);
+      slides[next].scrollIntoView({behavior:'smooth'});
+    } else if (e.key === 'ArrowUp' || e.key === 'PageUp'){
+      e.preventDefault();
+      var prev = Math.max(cur - 1, 0);
+      slides[prev].scrollIntoView({behavior:'smooth'});
+    }
+  });
+
+  setActive(0);
+</script>
+</body>
+</html>
