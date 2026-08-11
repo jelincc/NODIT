@@ -11,7 +11,7 @@
 <style>
   :root{
     --page-bg:#FFFFFF; --panel-bg:#F2F5F3; --panel-bg-2:#E8ECE9; --ink:#131715; --muted:#67766E; --border:#DEE4E0;
-    --accent:#17D97F; --accent-strong:#0A7A46; --accent-tint:#E3F8EE; --blue:#2F6FED; --blue-tint:#EAF1FE;
+    --accent:#17D97F; --accent-strong:#0A7A46; --accent-tint:#E3F8EE;
     --radius-lg:18px; --radius-md:10px; --radius-sm:8px;
     --shadow:0 1px 2px rgba(19,23,21,.04), 0 10px 24px -16px rgba(19,23,21,.18);
     --shadow-hover:0 2px 4px rgba(19,23,21,.05), 0 16px 32px -14px rgba(19,23,21,.24);
@@ -87,8 +87,8 @@
   .goto .ic{color:var(--muted);}
   .topbar-right{display:flex;align-items:center;gap:18px;}
   .promo-note{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);}
-  .btn-plan{font-size:12.5px;color:var(--blue);border:1.3px solid var(--blue);padding:7px 15px;border-radius:999px;font-weight:700;cursor:pointer;background:none;}
-  .btn-plan:hover{background:var(--blue-tint);}
+  .btn-plan{font-size:12.5px;color:var(--accent-strong);border:1.3px solid var(--accent-strong);padding:7px 15px;border-radius:999px;font-weight:700;cursor:pointer;background:none;}
+  .btn-plan:hover{background:var(--accent-tint);}
   .icbtn{color:var(--muted); cursor:pointer; display:flex;}
   .icbtn:hover{color:var(--ink);}
   .who{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
@@ -114,8 +114,8 @@
   .chip.crit{background:var(--crit-tint);color:var(--crit);}
   .chip .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
   .track{height:6px;border-radius:99px;background:var(--panel-bg-2);margin-top:11px;position:relative;}
-  .track > span{display:block;height:100%;border-radius:99px;background:var(--blue);position:relative;min-width:6px;}
-  .track > span::after{content:"";position:absolute;top:50%;right:0;width:12px;height:12px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 2.5px var(--page-bg);transform:translate(50%,-50%);}
+  .track > span{display:block;height:100%;border-radius:99px;background:var(--accent);position:relative;min-width:6px;}
+  .track > span::after{content:"";position:absolute;top:50%;right:0;width:12px;height:12px;border-radius:50%;background:var(--accent-strong);box-shadow:0 0 0 2.5px var(--page-bg);transform:translate(50%,-50%);}
 
   /* Job entry section */
   .jobsection{margin:0 0 26px;}
@@ -154,7 +154,7 @@
   .card-h .meta{font-size:12px;color:var(--muted);}
   .card-b{padding:0 18px 18px;}
   .card-b.pt{padding-top:16px;}
-  .link{font-size:12.5px;color:var(--blue);font-weight:600;cursor:pointer;}
+  .link{font-size:12.5px;color:var(--accent-strong);font-weight:600;cursor:pointer;}
   .link:hover{text-decoration:underline;}
 
   /* Getting started */
@@ -210,7 +210,7 @@
   .plan-quickrow .qv{display:block;font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;}
   .plan-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px;}
   .plan-actions .btn-primary{margin-top:0;flex:1;}
-  .link-sm{font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;white-space:nowrap;}
+  .link-sm{font-size:12px;color:var(--accent-strong);font-weight:600;cursor:pointer;white-space:nowrap;}
   .link-sm:hover{text-decoration:underline;}
   .btn-primary{width:100%;text-align:center;font-size:13px;font-weight:700;background:var(--ink);color:var(--page-bg);padding:11px;border-radius:999px;margin-top:13px;cursor:pointer;}
   .btn-primary:hover{background:#000;}
@@ -811,7 +811,7 @@
               <div class="card-b">
                 <div class="timeline">
                   <div class="tl-item"><div class="dotwrap"><span class="d" style="background:var(--good);"></span></div><div class="body"><div class="t">Received from 0x9f2a…7cE1</div><div class="d2">Withdrawal settlement</div></div><span class="amt">+12.4 ETH</span><span class="time">3m</span></div>
-                  <div class="tl-item"><div class="dotwrap"><span class="d" style="background:var(--blue);"></span></div><div class="body"><div class="t">Approval granted to Uniswap Router</div><div class="d2">Unlimited USDC allowance</div></div><span class="amt">—</span><span class="time">2h</span></div>
+                  <div class="tl-item"><div class="dotwrap"><span class="d" style="background:var(--muted);"></span></div><div class="body"><div class="t">Approval granted to Uniswap Router</div><div class="d2">Unlimited USDC allowance</div></div><span class="amt">—</span><span class="time">2h</span></div>
                   <div class="tl-item"><div class="dotwrap"><span class="d" style="background:var(--good);"></span></div><div class="body"><div class="t">Sent to 0x71bc…d902</div><div class="d2">Transfer</div></div><span class="amt">-8,000 USDC</span><span class="time">1d</span></div>
                   <div class="tl-item"><div class="dotwrap"><span class="d" style="background:var(--good);"></span></div><div class="body"><div class="t">Received from 0x0c9d…77e4</div><div class="d2">Transfer</div></div><span class="amt">+2.0 ETH</span><span class="time">2d</span></div>
                 </div>
