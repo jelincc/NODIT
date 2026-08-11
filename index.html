@@ -7,252 +7,270 @@
 <meta name="description" content="Nodit Console — Overview 화면 개선 프로토타입">
 <style>
   :root{
-    --page-bg:#F4F7F5; --page-surface:#FFFFFF; --page-ink:#0E1512; --page-muted:#647169; --page-border:#E7ECE9;
-    --accent:#17D97F; --accent-strong:#0A7A46; --accent-tint:#E8FAF1;
-    --radius-lg:20px; --radius-md:14px; --radius-sm:10px;
+    --page-bg:#FFFFFF; --panel-bg:#F6F8F7; --panel-bg-2:#EEF2F0; --ink:#131715; --muted:#697A72; --border:#E6EAE7;
+    --accent:#17D97F; --accent-strong:#0A7A46; --accent-tint:#E3F8EE; --blue:#2F6FED; --blue-tint:#EAF1FE;
+    --radius-lg:16px; --radius-md:10px; --radius-sm:8px;
 
-    --c-sidebar:#0A0D0C; --c-sidebar-ink:#C9D4D0; --c-sidebar-muted:#68766F; --c-sidebar-active:#12241C;
-    --c-bg:#FFFFFF; --c-canvas:#F6F8F7; --c-ink:#101714; --c-muted:#5E706A; --c-border:#E3E8E6;
-    --c-accent:#17D97F; --c-accent-ink:#0B7A46; --c-warn:#B8710C; --c-crit:#C7402F;
+    --sidebar:#0B0E0C; --sidebar-ink:#D3DAD6; --sidebar-muted:#6B7A72; --sidebar-active:#17D97F; --sidebar-active-ink:#06331F; --sidebar-hover:#161C19; --sidebar-border:#1D2420;
 
-    --job-build:#1D5FB0; --job-build-tint:#EAF1FC;
-    --job-operate:#B8501F; --job-operate-tint:#FCEEE6;
-    --job-manage:#0B7A46; --job-manage-tint:#E8FAF1;
-    --job-investigate:#4A3AA7; --job-investigate-tint:#EFEDFA;
-    --job-analyze:#0C7A72; --job-analyze-tint:#E3F5F3;
+    --good:#0A7A46; --good-tint:#E3F8EE; --warn:#9A6400; --warn-tint:#FBF1DC; --crit:#C0392E; --crit-tint:#FBEAE8;
 
-    --good:#0B7A46; --good-tint:#E4F7EC; --warn:#B8710C; --warn-tint:#FBF0DA; --crit:#C7402F; --crit-tint:#FBEAEA;
+    --chain-1:#2a78d6; --chain-2:#eb6834; --chain-3:#1baf7a; --chain-4:#c98500; --chain-5:#c2568a; --chain-6:#8f8a7d;
+
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,monospace;
   }
   *{box-sizing:border-box;}
   html,body{height:100%;margin:0;}
   body{
-    background:var(--c-canvas); color:var(--c-ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    -webkit-font-smoothing:antialiased;
+    background:var(--sidebar); color:var(--ink); font-family:var(--sans);
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   }
   button,input{font-family:inherit;}
   a{color:inherit; text-decoration:none;}
+  svg{display:block;}
 
   .app{height:100vh; display:flex;}
 
-  /* ===== Sidebar (fidelity to real Nodit Console) ===== */
-  .sidebar{width:228px; flex:none; background:var(--c-sidebar); color:var(--c-sidebar-ink); padding:22px 14px; display:flex; flex-direction:column; gap:22px; overflow-y:auto;}
-  .brand{display:flex; align-items:center; gap:9px; padding:0 6px; cursor:pointer;}
-  .brand .mark{width:24px;height:24px;border-radius:8px;background:var(--c-accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#062E1B;}
-  .brand .word{font-size:14.5px;font-weight:800;letter-spacing:.01em;color:#F2F6F4;}
-  .workspace{padding:9px 12px;border:1px solid #1E2624;border-radius:12px;font-size:12px;display:flex;align-items:center;justify-content:space-between;color:var(--c-sidebar-ink);}
-  .workspace .k{color:var(--c-sidebar-muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:2px;}
-  .navgroup{display:flex;flex-direction:column;gap:2px;}
-  .navgroup .label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--c-sidebar-muted);padding:8px 10px 4px;font-weight:700;}
-  .navitem{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;font-size:13px;color:var(--c-sidebar-ink);cursor:pointer;transition:background .12s;}
-  .navitem:hover{background:#151B19;}
-  .navitem.active{background:var(--c-sidebar-active);color:#EAFBF3;font-weight:700;}
-  .navitem .ic{width:13px;height:13px;border-radius:50%;background:currentColor;opacity:.4;flex:none;}
-  .navitem.active .ic{opacity:1;background:var(--c-accent);}
-  .navitem .beta{margin-left:auto;font-size:9px;font-weight:700;background:#1E2624;color:var(--c-sidebar-muted);padding:1px 5px;border-radius:4px;}
-  .navsub{padding-left:23px;display:flex;flex-direction:column;gap:2px;}
+  /* ===== Sidebar ===== */
+  .sidebar{width:232px; flex:none; background:var(--sidebar); color:var(--sidebar-ink); padding:16px 12px 18px; display:flex; flex-direction:column; overflow-y:auto;}
+  .brand-row{display:flex; align-items:center; justify-content:space-between; padding:6px 6px 14px; cursor:pointer;}
+  .brand{display:flex; align-items:center; gap:8px;}
+  .brand img{height:20px; width:auto; display:block;}
+  .brand .word{font-size:15px;font-weight:800;letter-spacing:.005em;color:#F4F8F6;}
+  .collapse-ic{color:var(--sidebar-muted);}
+
+  .workspace{
+    padding:8px 10px; border:1px solid var(--accent); border-radius:12px; font-size:12.5px;
+    display:flex; align-items:center; gap:9px; color:var(--sidebar-ink); margin-bottom:18px; cursor:pointer;
+  }
+  .workspace .wav{width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;flex:none;color:#06331F;}
+  .workspace .body{flex:1; min-width:0; line-height:1.35;}
+  .workspace .k{color:var(--sidebar-muted);font-size:10px;display:block;}
+  .workspace .v{font-weight:700;color:#F4F8F6;}
+  .workspace .chev{color:var(--sidebar-muted); flex:none;}
+
+  .navgroup{display:flex;flex-direction:column;gap:1px;margin-bottom:6px;}
+  .navgroup-label{
+    display:flex;align-items:center;justify-content:space-between;font-size:10.5px;text-transform:uppercase;
+    letter-spacing:.07em;color:var(--sidebar-muted);padding:12px 8px 6px;font-weight:800;cursor:default;
+  }
+  .navgroup-label.clickable{cursor:pointer;}
+  .navitem{
+    position:relative; display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;font-size:13.5px;
+    color:var(--sidebar-ink);cursor:pointer;transition:background .12s; font-weight:500;
+  }
+  .navitem .ic{flex:none;width:16px;height:16px;color:var(--sidebar-muted);}
+  .navitem:hover{background:var(--sidebar-hover);}
+  .navitem.active{background:var(--sidebar-active);color:var(--sidebar-active-ink);font-weight:700;}
+  .navitem.active .ic{color:var(--sidebar-active-ink);}
+  .navitem .beta{margin-left:auto;font-size:9px;font-weight:800;background:var(--accent);color:#06331F;padding:2px 7px;border-radius:999px;}
+  .navitem .dot{width:5px;height:5px;border-radius:50%;background:var(--accent);position:absolute;left:20px;top:8px;}
+  .navitem .ext{margin-left:auto;color:var(--sidebar-muted);}
+  .navsub{display:flex;flex-direction:column;gap:1px;}
+  .navsub .navitem{padding-left:10px;}
 
   /* ===== Main ===== */
-  .main{flex:1; min-width:0; display:flex; flex-direction:column;}
-  .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--c-border);background:var(--c-bg); flex:none;}
-  .btn-ghost{font-size:12.5px;color:var(--c-ink);border:1.5px solid var(--c-border);padding:7px 14px;border-radius:999px;font-weight:700;cursor:pointer;background:none;transition:background .12s,border-color .12s;}
-  .btn-ghost:hover{background:#F6F8F7;border-color:#C9D2CE;}
-  .topbar-right{display:flex;align-items:center;gap:16px;}
-  .avatar{width:28px;height:28px;border-radius:50%;background:var(--c-accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#06331F;cursor:pointer;}
+  .main{flex:1; min-width:0; display:flex; flex-direction:column; background:var(--page-bg); border-radius:14px 0 0 0; overflow:hidden;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--border);background:var(--page-bg); flex:none;}
+  .goto{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;}
+  .goto .ic{color:var(--muted);}
+  .topbar-right{display:flex;align-items:center;gap:18px;}
+  .promo-note{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);}
+  .btn-plan{font-size:12.5px;color:var(--blue);border:1.3px solid var(--blue);padding:7px 15px;border-radius:999px;font-weight:700;cursor:pointer;background:none;}
+  .btn-plan:hover{background:var(--blue-tint);}
+  .icbtn{color:var(--muted); cursor:pointer; display:flex;}
+  .icbtn:hover{color:var(--ink);}
+  .who{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
+  .who .ic{color:var(--muted);}
 
-  .content{flex:1; overflow-y:auto; padding:28px 32px 60px; background:var(--c-canvas);}
+  .content{flex:1; overflow-y:auto; padding:26px 28px 64px;}
   .page-view{display:none;}
   .page-view.active{display:block;}
-  .content h2{font-size:22px;margin:0 0 20px;letter-spacing:-.015em;font-weight:800;}
+  .content h2{font-size:25px;margin:0 0 22px;letter-spacing:-.01em;font-weight:800;}
 
   /* Stat strip */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
-  .stat{background:var(--c-bg);border-radius:16px;padding:18px 20px;box-shadow:0 1px 2px rgba(16,23,20,.04),0 10px 24px -18px rgba(16,23,20,.25);}
-  .stat .lbl{font-size:11px;color:var(--c-muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin:0 0 10px;}
-  .stat .val{font-family:ui-monospace,"SF Mono","Cascadia Mono",monospace;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.01em;}
-  .stat .sub{font-size:12px;color:var(--c-muted);margin-top:8px;}
-  .chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;}
-  .chip.plan{background:#E4FBEF;color:var(--c-accent-ink);}
-  .chip.elastic{background:#EEF2F1;color:var(--c-muted);}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+  .stat{background:var(--panel-bg);border-radius:var(--radius-lg);padding:16px 18px;}
+  .stat .lbl{font-size:11.5px;color:var(--muted);font-weight:600;margin:0 0 9px;}
+  .stat .val{font-size:22px;font-weight:800;letter-spacing:-.01em;}
+  .stat .sub{font-size:12px;color:var(--muted);margin-top:7px;}
+  .stat .sub.good{color:var(--good);} .stat .sub.crit{color:var(--crit);}
+  .chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;}
+  .chip.plan{background:var(--accent-tint);color:var(--accent-strong);}
+  .chip.elastic{background:var(--panel-bg-2);color:var(--muted);}
   .chip.good{background:var(--good-tint);color:var(--good);}
   .chip.warn{background:var(--warn-tint);color:var(--warn);}
   .chip.crit{background:var(--crit-tint);color:var(--crit);}
   .chip .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
-  .track{height:7px;border-radius:99px;background:#EEF2F0;margin-top:12px;overflow:hidden;}
-  .track > span{display:block;height:100%;border-radius:99px;background:var(--c-accent);}
+  .track{height:6px;border-radius:99px;background:var(--panel-bg-2);margin-top:11px;overflow:hidden;}
+  .track > span{display:block;height:100%;border-radius:99px;background:var(--blue);}
 
-  /* Job entry section — the new improvement */
-  .jobsection{margin:0 0 30px;}
-  .jobsection-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;}
-  .jobsection-head h3{margin:0; font-size:15px; font-weight:800;}
-  .jobsection-head span{font-size:12px; color:var(--c-muted);}
-  .jobgrid{display:grid; grid-template-columns:repeat(5,1fr); gap:12px;}
+  /* Job entry section */
+  .jobsection{margin:0 0 26px;}
+  .jobsection-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:11px;}
+  .jobsection-head h3{margin:0; font-size:16px; font-weight:800;}
+  .jobsection-head span{font-size:12px; color:var(--muted);}
+  .jobgrid{display:grid; grid-template-columns:repeat(5,1fr); gap:10px;}
   .jobcard{
-    background:var(--c-bg); border-radius:16px; padding:16px 16px 18px; box-shadow:0 1px 2px rgba(16,23,20,.04),0 10px 24px -18px rgba(16,23,20,.25);
-    border-top:3px solid transparent; cursor:pointer; display:flex; flex-direction:column; gap:9px;
-    transition:box-shadow .15s,transform .15s;
+    background:var(--panel-bg); border-radius:var(--radius-lg); padding:16px 16px 15px;
+    cursor:pointer; display:flex; flex-direction:column; gap:10px; transition:background .12s;
   }
-  .jobcard:hover{box-shadow:0 2px 4px rgba(16,23,20,.06),0 16px 32px -14px rgba(16,23,20,.32);transform:translateY(-2px);}
-  .jobcard.build{border-top-color:var(--job-build);}
-  .jobcard.operate{border-top-color:var(--job-operate);}
-  .jobcard.manage{border-top-color:var(--job-manage);}
-  .jobcard.investigate{border-top-color:var(--job-investigate);}
-  .jobcard.analyze{border-top-color:var(--job-analyze);}
-  .jobcard .tag{font-family:ui-monospace,monospace; font-size:10px; font-weight:800; letter-spacing:.05em; padding:3px 8px; border-radius:999px; width:fit-content;}
-  .jobcard.build .tag{background:var(--job-build-tint);color:var(--job-build);}
-  .jobcard.operate .tag{background:var(--job-operate-tint);color:var(--job-operate);}
-  .jobcard.manage .tag{background:var(--job-manage-tint);color:var(--job-manage);}
-  .jobcard.investigate .tag{background:var(--job-investigate-tint);color:var(--job-investigate);}
-  .jobcard.analyze .tag{background:var(--job-analyze-tint);color:var(--job-analyze);}
-  .jobcard h4{margin:0; font-size:13.5px; font-weight:800; line-height:1.35;}
-  .jobcard p{margin:0; font-size:11.5px; color:var(--c-muted); line-height:1.5;}
-  .jobcard .metric{font-family:ui-monospace,monospace; font-size:10.5px; color:var(--c-muted); border-top:1px solid var(--c-border); padding-top:8px; margin-top:1px;}
-  .jobcard .go{font-size:11px; font-weight:800; color:var(--c-accent-ink); display:flex; align-items:center; gap:4px;}
+  .jobcard:hover{background:var(--panel-bg-2);}
+  .jobcard .icwrap{width:32px;height:32px;border-radius:9px;background:var(--page-bg);display:flex;align-items:center;justify-content:center;}
+  .jobcard .icwrap .ic{width:17px;height:17px;color:var(--ink);}
+  .jobcard .tag{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;}
+  .jobcard .tag .dot{width:5px;height:5px;border-radius:50%;background:var(--accent);}
+  .jobcard h4{margin:0; font-size:13.5px; font-weight:700; line-height:1.35;}
+  .jobcard p{margin:0; font-size:12px; color:var(--muted); line-height:1.5;}
+  .jobcard .metric{font-size:11px; color:var(--muted); margin-top:1px;}
+  .jobcard .go{font-size:12px; font-weight:700; color:var(--accent-strong); display:flex; align-items:center; gap:3px; margin-top:2px;}
 
   /* Grid columns */
-  .grid{display:grid;grid-template-columns:1.65fr 1fr;gap:16px;align-items:start;}
-  .col{display:flex;flex-direction:column;gap:16px;}
-  .card{background:var(--c-bg);border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(16,23,20,.04),0 10px 24px -18px rgba(16,23,20,.25);}
-  .card-h{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--c-border); gap:12px;}
+  .grid{display:grid;grid-template-columns:1.65fr 1fr;gap:14px;align-items:start;}
+  .col{display:flex;flex-direction:column;gap:14px;}
+  .card{background:var(--panel-bg);border-radius:var(--radius-lg);overflow:hidden;}
+  .card-h{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px; gap:12px;}
   .card-h h3{margin:0;font-size:14.5px;font-weight:800;}
-  .card-h .meta{font-size:12px;color:var(--c-muted);}
-  .card-b{padding:18px 20px;}
-  .link{font-size:12.5px;color:var(--c-accent-ink);font-weight:700;cursor:pointer;}
+  .card-h .meta{font-size:12px;color:var(--muted);}
+  .card-b{padding:0 18px 18px;}
+  .card-b.pt{padding-top:16px;}
+  .link{font-size:12.5px;color:var(--blue);font-weight:600;cursor:pointer;}
   .link:hover{text-decoration:underline;}
 
   /* Getting started */
   .checklist{display:flex;flex-direction:column;}
-  .step{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-top:1px solid var(--c-border);}
-  .step:first-child{border-top:none;padding-top:2px;}
-  .step .box{width:22px;height:22px;border-radius:8px;flex:none;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;cursor:pointer;transition:background .12s,border-color .12s;}
-  .step.done .box{background:var(--c-accent);color:#06331F;}
-  .step.todo .box{border:1.75px solid var(--c-border);color:transparent;}
-  .step.todo:hover .box{border-color:var(--c-accent);}
-  .step .t{font-size:13.5px;font-weight:700;}
-  .step.done .t{color:var(--c-muted);text-decoration:line-through;text-decoration-color:var(--c-border);}
-  .step .d{font-size:12px;color:var(--c-muted);margin-top:3px;}
-  .step .cta{margin-left:auto;font-size:12px;font-weight:800;color:#06331F;background:var(--c-accent);padding:8px 14px;border-radius:999px;white-space:nowrap;cursor:pointer;transition:transform .1s;}
-  .step .cta:hover{transform:translateY(-1px);}
+  .step{display:flex;align-items:flex-start;gap:11px;padding:12px 0;border-top:1px solid var(--border);}
+  .step:first-child{border-top:none;padding-top:0;}
+  .step .box{width:20px;height:20px;border-radius:7px;flex:none;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;cursor:pointer;transition:background .12s,border-color .12s;}
+  .step.done .box{background:var(--accent);color:#06331F;}
+  .step.todo .box{border:1.75px solid var(--border);background:var(--page-bg);color:transparent;}
+  .step.todo:hover .box{border-color:var(--accent);}
+  .step .t{font-size:13.5px;font-weight:600;}
+  .step.done .t{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--border);}
+  .step .d{font-size:12px;color:var(--muted);margin-top:3px;}
+  .step .cta{margin-left:auto;font-size:12px;font-weight:700;color:var(--ink);background:var(--page-bg);border:1px solid var(--border);padding:7px 13px;border-radius:var(--radius-md);white-space:nowrap;cursor:pointer;}
+  .step .cta:hover{background:var(--panel-bg-2);}
 
   /* Tables */
-  table{width:100%;border-collapse:collapse;font-size:13px;}
-  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--c-muted);font-weight:700;padding:0 12px 12px 0;}
-  td{padding:12px 12px 12px 0;border-top:1px solid var(--c-border);}
-  td.num{font-family:ui-monospace,"SF Mono","Cascadia Mono",monospace;font-variant-numeric:tabular-nums;}
-  .proj-name{font-weight:700;display:flex;align-items:center;gap:8px;}
-  .proj-name .sw{width:7px;height:7px;border-radius:50%;background:var(--c-accent);}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{text-align:left;font-size:11.5px;color:var(--muted);font-weight:600;padding:0 12px 10px 0;}
+  td{padding:12px 12px 12px 0;border-top:1px solid var(--border);}
+  td.num{font-variant-numeric:tabular-nums;}
+  .proj-name{font-weight:600;display:flex;align-items:center;gap:8px;}
+  .proj-name .sw{width:6px;height:6px;border-radius:50%;background:var(--accent);}
   tbody tr.clickable{cursor:pointer;}
-  tbody tr.clickable:hover td{background:#FAFBFA;}
+  tbody tr.clickable:hover td{background:var(--panel-bg-2);}
 
   /* Usage card */
-  .usage-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .gauge-lbl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
-  .gauge-lbl .l{font-size:12.5px;color:var(--c-muted);font-weight:700;}
-  .gauge-lbl .r{font-family:ui-monospace,monospace;font-size:12px;color:var(--c-muted);font-variant-numeric:tabular-nums;}
-  .empty-mini{border:1.5px dashed var(--c-border);border-radius:14px;padding:20px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;}
-  .empty-mini .ic{width:26px;height:26px;border-radius:50%;background:#EEF2F0;margin-bottom:2px;}
-  .empty-mini .t{font-size:12px;font-weight:600;color:var(--c-ink);}
-  .empty-mini .d{font-size:11px;color:var(--c-muted);line-height:1.4;}
-  .autoscale{display:flex;align-items:center;justify-content:space-between;padding-top:16px;margin-top:16px;border-top:1px solid var(--c-border);}
-  .autoscale .l{font-size:12.5px;font-weight:700;}
-  .autoscale .d{font-size:11px;color:var(--c-muted);}
+  .usage-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .gauge-lbl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;}
+  .gauge-lbl .l{font-size:12.5px;color:var(--muted);font-weight:600;}
+  .gauge-lbl .r{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .empty-mini{border:1.5px dashed var(--border);border-radius:var(--radius-md);padding:18px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--page-bg);}
+  .empty-mini .t{font-size:12px;font-weight:600;color:var(--ink);}
+  .empty-mini .d{font-size:11px;color:var(--muted);line-height:1.4;}
+  .autoscale{display:flex;align-items:center;justify-content:space-between;padding-top:14px;margin-top:14px;border-top:1px solid var(--border);}
+  .autoscale .l{font-size:12.5px;font-weight:600;}
+  .autoscale .d{font-size:11px;color:var(--muted);}
 
-  /* Right rail */
-  .promo{background:linear-gradient(135deg,#0E1F17,#122A1F);border-radius:16px;padding:20px 22px;color:#E7F5EE;position:relative;overflow:hidden;}
-  .promo .k{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-accent);}
-  .promo .t{font-size:15px;font-weight:800;margin:8px 0 5px;line-height:1.3;letter-spacing:-.005em;}
-  .promo .d{font-size:12.5px;color:#B7CFC4;line-height:1.55;margin:0 0 14px;}
-  .promo .cta{display:inline-flex;font-size:12.5px;font-weight:800;background:var(--c-accent);color:#06331F;padding:9px 16px;border-radius:999px;cursor:pointer;transition:filter .12s;}
-  .promo .cta:hover{filter:brightness(1.08);}
+  /* Right rail promo */
+  .promo{background:linear-gradient(135deg,#0E1F17,#0F2A1F);border-radius:var(--radius-lg);padding:18px 20px;color:#E7F5EE;position:relative;overflow:hidden;}
+  .promo .k{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);}
+  .promo .t{font-size:14.5px;font-weight:800;margin:7px 0 5px;line-height:1.3;}
+  .promo .d{font-size:12px;color:#AFC7BC;line-height:1.55;margin:0 0 13px;}
+  .promo .cta{display:inline-flex;font-size:12px;font-weight:700;background:#fff;color:#0B1210;padding:8px 15px;border-radius:999px;cursor:pointer;}
 
-  .plan-feat{display:flex;align-items:center;justify-content:space-between;padding:9px 0;font-size:13px;border-top:1px solid var(--c-border);}
+  .plan-feat{display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:13px;border-top:1px solid var(--border);}
   .plan-feat:first-child{border-top:none;}
-  .plan-feat .v{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums;color:var(--c-muted);font-weight:600;}
-  .btn-primary{width:100%;text-align:center;font-size:13px;font-weight:800;background:var(--c-ink);color:#fff;padding:12px;border-radius:12px;margin-top:14px;cursor:pointer;transition:filter .12s;}
-  .btn-primary:hover{filter:brightness(1.15);}
-  .btn-secondary{width:100%;text-align:center;font-size:13px;font-weight:800;border:1.5px solid var(--c-border);color:var(--c-ink);padding:12px;border-radius:12px;cursor:pointer;}
-  .btn-secondary:hover{background:#F6F8F7;}
+  .plan-feat .v{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600;}
+  .btn-primary{width:100%;text-align:center;font-size:13px;font-weight:700;background:var(--ink);color:var(--page-bg);padding:11px;border-radius:var(--radius-md);margin-top:13px;cursor:pointer;}
+  .btn-primary:hover{background:#000;}
+  .btn-secondary{width:100%;text-align:center;font-size:13px;font-weight:700;border:1px solid var(--border);color:var(--ink);padding:11px;border-radius:var(--radius-md);cursor:pointer;background:var(--page-bg);}
+  .btn-secondary:hover{background:var(--panel-bg-2);}
 
-  .tabs{display:flex;gap:2px;background:#EEF2F0;padding:3px;border-radius:999px;}
-  .tabs button{border:0;background:transparent;font:inherit;font-size:12px;font-weight:800;color:var(--c-muted);padding:6px 14px;border-radius:999px;cursor:pointer;}
-  .tabs button.active{background:#fff;color:var(--c-ink);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .tabs{display:flex;gap:20px;border-bottom:1px solid var(--border);}
+  .tabs button{border:0;background:transparent;font:inherit;font-size:13px;font-weight:600;color:var(--muted);padding:0 0 10px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}
+  .tabs button.active{color:var(--ink);font-weight:700;border-bottom-color:var(--ink);}
 
-  .swtoggle{width:38px;height:22px;border-radius:99px;background:#DCE4E1;position:relative;cursor:pointer;flex:none;transition:background .15s;border:none;padding:0;}
-  .swtoggle::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
-  .swtoggle.on{background:var(--c-accent);}
-  .swtoggle.on::after{transform:translateX(16px);}
+  .swtoggle{width:34px;height:20px;border-radius:99px;background:var(--panel-bg-2);position:relative;cursor:pointer;flex:none;transition:background .15s;border:none;padding:0;}
+  .swtoggle::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.25);}
+  .swtoggle.on{background:var(--accent);}
+  .swtoggle.on::after{transform:translateX(14px);}
 
   [data-panel="dedicated"]{display:none;}
 
-  /* ===== Sub-screens (reached via Job cards / APIs sub-nav) ===== */
-  .subpage-head{margin-bottom:20px;}
-  .subpage-head .eyebrow{font-family:ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-muted);margin:0 0 6px;}
-  .subpage-head p{font-size:13px;color:var(--c-muted);margin:6px 0 0;max-width:600px;line-height:1.6;}
+  /* ===== Sub-screens ===== */
+  .subpage-head{margin-bottom:18px;}
+  .subpage-head .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);margin:0 0 7px;}
+  .subpage-head p{font-size:13px;color:var(--muted);margin:6px 0 0;max-width:600px;line-height:1.6;}
 
-  .flowbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 22px;font-family:ui-monospace,monospace;font-size:12px;}
-  .flowbar .n{padding:6px 12px;border-radius:999px;font-weight:700;}
-  .flowbar .a{color:var(--c-muted);}
+  .flowbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 20px;font-size:12px;}
+  .flowbar .n{padding:6px 12px;border-radius:999px;font-weight:700;background:var(--panel-bg);color:var(--ink);}
+  .flowbar .a{color:var(--muted);}
 
-  .layout-2col{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;align-items:start;}
+  .layout-2col{display:grid;grid-template-columns:1.7fr 1fr;gap:14px;align-items:start;}
 
-  .filterrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
-  .fchip{border:1px solid var(--c-border);background:var(--c-bg);font-size:12px;font-weight:700;color:var(--c-muted);padding:6px 13px;border-radius:999px;cursor:pointer;}
-  .fchip.active{background:var(--c-ink);color:#fff;border-color:var(--c-ink);}
+  .filterrow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
+  .fchip{border:1px solid var(--border);background:var(--page-bg);font-size:12px;font-weight:600;color:var(--muted);padding:6px 13px;border-radius:999px;cursor:pointer;}
+  .fchip.active{background:var(--ink);color:var(--page-bg);border-color:var(--ink);}
 
-  .listrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--c-border);font-size:12.5px;cursor:pointer;}
+  .listrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border);font-size:12.5px;cursor:pointer;}
   .listrow:first-child{border-top:none;}
-  .listrow:hover{color:var(--c-accent-ink);}
-  .listrow .k{font-family:ui-monospace,monospace;font-size:10px;font-weight:800;color:var(--c-muted);background:#EEF2F0;padding:2px 7px;border-radius:5px;flex:none;text-transform:uppercase;}
+  .listrow:hover{color:var(--accent-strong);}
+  .listrow .k{font-size:10px;font-weight:700;color:var(--muted);background:var(--panel-bg-2);padding:2px 7px;border-radius:5px;flex:none;text-transform:uppercase;}
 
-  .distbar{display:flex;height:14px;border-radius:8px;overflow:hidden;gap:2px;margin:6px 0 14px;}
+  .distbar{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px;margin:4px 0 14px;}
   .distbar span{display:block;height:100%;}
   .distlegend{display:flex;flex-direction:column;gap:8px;}
   .distlegend .row{display:flex;align-items:center;gap:8px;font-size:12.5px;}
   .distlegend .row .sw{width:8px;height:8px;border-radius:2px;flex:none;}
   .distlegend .row .name{flex:1;}
-  .distlegend .row .pct{font-family:ui-monospace,monospace;color:var(--c-muted);font-variant-numeric:tabular-nums;}
+  .distlegend .row .pct{color:var(--muted);font-variant-numeric:tabular-nums;}
 
   .timeline{display:flex;flex-direction:column;}
-  .tl-item{display:flex;gap:14px;padding:14px 0;border-top:1px solid var(--c-border);cursor:pointer;}
+  .tl-item{display:flex;gap:13px;padding:13px 0;border-top:1px solid var(--border);cursor:pointer;}
   .tl-item:first-child{border-top:none;}
   .tl-item .dotwrap{flex:none;display:flex;flex-direction:column;align-items:center;padding-top:3px;}
-  .tl-item .dotwrap .d{width:9px;height:9px;border-radius:50%;}
+  .tl-item .dotwrap .d{width:8px;height:8px;border-radius:50%;}
   .tl-item .body{flex:1;min-width:0;}
-  .tl-item .t{font-size:13px;font-weight:700;}
-  .tl-item .d2{font-size:12px;color:var(--c-muted);margin-top:2px;font-family:ui-monospace,monospace;}
-  .tl-item .amt{flex:none;text-align:right;font-family:ui-monospace,monospace;font-size:13px;font-weight:700;}
-  .tl-item .time{flex:none;font-family:ui-monospace,monospace;font-size:11px;color:var(--c-muted);width:56px;text-align:right;}
+  .tl-item .t{font-size:13px;font-weight:600;}
+  .tl-item .d2{font-size:12px;color:var(--muted);margin-top:2px;}
+  .tl-item .amt{flex:none;text-align:right;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;}
+  .tl-item .time{flex:none;font-size:11.5px;color:var(--muted);width:52px;text-align:right;}
 
-  .risk-badge{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;padding:10px 12px;border-radius:10px;margin-bottom:8px;}
+  .risk-badge{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;padding:10px 12px;border-radius:var(--radius-md);margin-bottom:7px;}
   .risk-badge.ok{background:var(--good-tint);color:var(--good);}
   .risk-badge.watch{background:var(--warn-tint);color:var(--warn);}
 
-  .dataset-row{display:flex;align-items:center;gap:14px;padding:15px 0;border-top:1px solid var(--c-border);}
+  .dataset-row{display:flex;align-items:center;gap:13px;padding:14px 0;border-top:1px solid var(--border);}
   .dataset-row:first-child{border-top:none;}
-  .dataset-row .ic{width:34px;height:34px;border-radius:9px;background:var(--job-analyze-tint);color:var(--job-analyze);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex:none;}
+  .dataset-row .ic{width:32px;height:32px;border-radius:9px;background:var(--page-bg);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none;}
+  .dataset-row .ic svg{width:16px;height:16px;}
   .dataset-row .body{flex:1;min-width:0;}
-  .dataset-row .t{font-size:13.5px;font-weight:700;}
-  .dataset-row .d{font-size:12px;color:var(--c-muted);margin-top:2px;}
+  .dataset-row .t{font-size:13.5px;font-weight:600;}
+  .dataset-row .d{font-size:12px;color:var(--muted);margin-top:2px;}
   .dataset-row .actions{flex:none;display:flex;gap:6px;}
-  .btn-sm{font-size:11.5px;padding:7px 12px;border-radius:999px;font-weight:800;cursor:pointer;}
-  .btn-sm.ghost{border:1px solid var(--c-border);background:#fff;color:var(--c-ink);}
-  .btn-sm.dark{background:var(--c-ink);color:#fff;}
+  .btn-sm{font-size:12px;padding:7px 12px;border-radius:var(--radius-md);font-weight:700;cursor:pointer;}
+  .btn-sm.ghost{border:1px solid var(--border);background:var(--page-bg);color:var(--ink);}
+  .btn-sm.dark{background:var(--ink);color:var(--page-bg);}
 
-  .schema-mono{font-family:ui-monospace,monospace;font-size:11.5px;background:#F1F3F1;border-radius:10px;padding:14px 16px;line-height:1.8;overflow-x:auto;white-space:pre;}
-  .schema-mono .c2{color:var(--c-muted);}
+  .schema-mono{font-family:var(--mono);font-size:12px;background:var(--page-bg);border-radius:var(--radius-sm);padding:14px 16px;line-height:1.85;overflow-x:auto;white-space:pre;}
+  .schema-mono .c2{color:var(--muted);}
 
-  .api-cat{display:flex;align-items:center;gap:14px;padding:14px 0;border-top:1px solid var(--c-border);}
+  .api-cat{display:flex;align-items:center;gap:13px;padding:13px 0;border-top:1px solid var(--border);}
   .api-cat:first-child{border-top:none;}
-  .api-cat .ic{width:34px;height:34px;border-radius:9px;background:var(--job-build-tint);color:var(--job-build);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none;}
+  .api-cat .ic{width:32px;height:32px;border-radius:9px;background:var(--page-bg);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none;}
+  .api-cat .ic svg{width:16px;height:16px;}
   .api-cat .body{flex:1;min-width:0;}
-  .api-cat .t{font-size:13.5px;font-weight:700;}
-  .api-cat .d{font-size:12px;color:var(--c-muted);margin-top:2px;}
-  .api-cat .meta{flex:none;text-align:right;font-size:11.5px;color:var(--c-muted);font-family:ui-monospace,monospace;}
+  .api-cat .t{font-size:13.5px;font-weight:600;}
+  .api-cat .d{font-size:12px;color:var(--muted);margin-top:2px;}
+  .api-cat .meta{flex:none;text-align:right;font-size:11.5px;color:var(--muted);}
 
-  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 20px;gap:10px;max-width:440px;margin:40px auto;}
-  .empty-state .ic{width:40px;height:40px;border-radius:12px;background:#EEF2F0;margin-bottom:4px;}
-  .empty-state h3{font-size:15.5px;margin:0;}
-  .empty-state p{font-size:12.5px;color:var(--c-muted);line-height:1.6;margin:0;}
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 20px;gap:9px;max-width:420px;margin:30px auto;}
+  .empty-state .ic{width:38px;height:38px;border-radius:11px;background:var(--panel-bg);margin-bottom:4px;display:flex;align-items:center;justify-content:center;color:var(--muted);}
+  .empty-state h3{font-size:15px;margin:0;}
+  .empty-state p{font-size:12.5px;color:var(--muted);line-height:1.6;margin:0;}
 
   @media (max-width:1180px){
     .jobgrid{grid-template-columns:repeat(3,1fr);}
@@ -263,50 +281,104 @@
 <body>
 <div class="app">
   <aside class="sidebar">
-    <div class="brand" data-nav="overview"><span class="mark">N</span><span class="word">NODIT</span></div>
-    <div class="workspace"><span><span class="k">Workspace</span>Personal · dmddesign</span><span>›</span></div>
+    <div class="brand-row" data-nav="overview">
+      <div class="brand"><img src="assets/nodit-mark.png" alt="Nodit"><span class="word">NODIT</span></div>
+      <svg class="collapse-ic" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="10" rx="2"/><path d="M6.5 3V13"/></svg>
+    </div>
+
+    <div class="workspace">
+      <span class="wav"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="8" cy="6" r="2.3"/><path d="M3.5 13C3.5 10.2 5.5 8.8 8 8.8C10.5 8.8 12.5 10.2 12.5 13"/></svg></span>
+      <span class="body"><span class="k">Workspace</span><span class="v">Personal · dmddesign</span></span>
+      <svg class="chev" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 4L10 8L6 12"/></svg>
+    </div>
 
     <nav class="navgroup">
-      <div class="label">Workspace</div>
-      <div class="navitem" data-nav="overview"><span class="ic"></span>Overview</div>
-      <div class="navitem" data-nav="placeholder" data-label="Projects"><span class="ic"></span>Projects</div>
-      <div class="navitem" data-nav="placeholder" data-label="Chains"><span class="ic"></span>Chains</div>
-      <div class="navitem" data-nav="datashare"><span class="ic"></span>Datashare<span class="beta">BETA</span></div>
+      <div class="navgroup-label">Workspace</div>
+      <div class="navitem active" data-nav="overview">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7.3L8 2.5L14 7.3"/><path d="M3.6 6.3V13H6.6V9.3H9.4V13H12.4V6.3"/></svg>
+        Overview
+      </div>
+      <div class="navitem" data-nav="placeholder" data-label="Projects">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.3 4.8C2.3 4.14772 2.84772 3.6 3.5 3.6H6.4L7.7 5H12.5C13.1523 5 13.7 5.44772 13.7 6.1V11.3C13.7 11.9523 13.1523 12.5 12.5 12.5H3.5C2.84772 12.5 2.3 11.9523 2.3 11.3V4.8Z"/></svg>
+        Projects
+      </div>
+      <div class="navitem" data-nav="placeholder" data-label="Chains">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="3" r="1.5"/><circle cx="4" cy="12.5" r="1.5"/><circle cx="12" cy="12.5" r="1.5"/><path d="M8 4.5V7M8 7L4 11M8 7L12 11"/></svg>
+        Chains
+      </div>
+      <div class="navitem" data-nav="datashare">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 13V9.5M8 13V5M12.5 13V7.3"/></svg>
+        Datashare<span class="dot"></span><span class="beta">BETA</span>
+      </div>
     </nav>
 
     <nav class="navgroup">
-      <div class="label">Monitor</div>
-      <div class="navitem" data-nav="placeholder" data-label="Request Logs"><span class="ic"></span>Request Logs</div>
-      <div class="navitem" data-nav="placeholder" data-label="Webhook"><span class="ic"></span>Webhook</div>
-      <div class="navitem" data-nav="placeholder" data-label="x402 Logs"><span class="ic"></span>x402 Logs</div>
-      <div class="navitem" data-nav="placeholder" data-label="Status"><span class="ic"></span>Status</div>
+      <div class="navgroup-label">Monitor</div>
+      <div class="navitem" data-nav="placeholder" data-label="Request Logs">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.8V6L8 9.5V13.2M12 2.8V6L8 9.5"/></svg>
+        Request Logs
+      </div>
+      <div class="navitem" data-nav="placeholder" data-label="Webhook">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="3.6" r="1.7"/><circle cx="3.8" cy="12" r="1.7"/><circle cx="12.2" cy="12" r="1.7"/><path d="M8 5.3C8 7.8 6.2 8.3 4.9 10.1M8 5.3C8 7.8 9.8 8.3 11.1 10.1"/></svg>
+        Webhook
+      </div>
+      <div class="navitem" data-nav="placeholder" data-label="x402 Logs">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="5.3"/><path d="M8 5.3V10.7M9.4 6.4C9.4 5.7 8.8 5.3 8 5.3C7.2 5.3 6.6 5.7 6.6 6.4C6.6 7.8 9.4 7.2 9.4 8.6C9.4 9.4 8.8 9.8 8 9.8C7.2 9.8 6.6 9.4 6.6 8.7"/></svg>
+        x402 Logs
+      </div>
+      <div class="navitem" data-nav="placeholder" data-label="Status">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="8.2" height="8.2" rx="1.6"/><path d="M4.8 8.4L8 5.2"/></svg>
+        Status <svg class="ext" width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 9.5L12 4M12 4H8M12 4V8"/></svg>
+      </div>
     </nav>
 
     <nav class="navgroup">
-      <div class="label">Services</div>
-      <div class="navitem" data-nav="apis"><span class="ic"></span>APIs</div>
+      <div class="navgroup-label">Services</div>
+    </nav>
+    <nav class="navgroup">
+      <div class="navgroup-label">APIs</div>
       <div class="navsub">
-        <div class="navitem" data-nav="asset-account"><span class="ic"></span>Asset &amp; Account</div>
-        <div class="navitem" data-nav="payments-transfers"><span class="ic"></span>Payments &amp; Transfers</div>
-        <div class="navitem" data-nav="txs-provenance"><span class="ic"></span>Txs &amp; Provenance</div>
+        <div class="navitem" data-nav="asset-account">
+          <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4.3" width="12" height="8.7" rx="1.6"/><path d="M2 6.7H14"/><rect x="9.6" y="8.4" width="3" height="2" rx="0.6"/></svg>
+          Asset &amp; Account<span class="dot"></span>
+        </div>
+        <div class="navitem" data-nav="payments-transfers">
+          <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5.6 3.2H3.6V12.8H5.6M10.4 3.2H12.4V12.8H10.4"/><path d="M8 6V10M9.1 6.9C9.1 6.3 8.6 6 8 6C7.4 6 6.9 6.3 6.9 6.9C6.9 8.1 9.1 7.6 9.1 8.9C9.1 9.4 8.6 9.7 8 9.7C7.4 9.7 6.9 9.4 6.9 8.8"/></svg>
+          Payments &amp; Transfers<span class="dot"></span>
+        </div>
+        <div class="navitem" data-nav="txs-provenance">
+          <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.2 9.8L11 5"/><path d="M7 5H11V9"/><path d="M3.5 7V12C3.5 12.55 3.95 13 4.5 13H9.3"/></svg>
+          Txs &amp; Provenance<span class="dot"></span>
+        </div>
       </div>
     </nav>
 
     <nav class="navgroup" style="margin-top:auto;">
-      <div class="label">Manage</div>
-      <div class="navitem" data-nav="placeholder" data-label="Team"><span class="ic"></span>Team</div>
-      <div class="navitem" data-nav="placeholder" data-label="Billing"><span class="ic"></span>Billing</div>
+      <div class="navgroup-label">Manage</div>
+      <div class="navitem" data-nav="placeholder" data-label="Team">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><path d="M2.5 13C2.5 10.5 4 9 6 9C8 9 9.5 10.5 9.5 13"/><circle cx="11.6" cy="6.6" r="1.6"/><path d="M10.6 9.3C12.1 9.3 13.2 10.7 13.3 13"/></svg>
+        Team<span class="dot"></span>
+      </div>
+      <div class="navitem" data-nav="placeholder" data-label="Billing">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2.4" y="3.2" width="11.2" height="3" rx="1"/><path d="M3.1 6.2V12C3.1 12.55 3.55 13 4.1 13H11.9C12.45 13 12.9 12.55 12.9 12V6.2"/><path d="M6.5 9.2H9.5"/></svg>
+        Billing
+      </div>
     </nav>
   </aside>
 
   <div class="main">
     <div class="topbar">
-      <span class="btn-ghost" style="display:flex;align-items:center;gap:6px;">Go to Project<span style="font-size:9px;">⌄</span></span>
+      <span class="goto">Go to Project <svg class="ic" width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6L8 10L12 6"/></svg></span>
       <div class="topbar-right">
-        <span style="font-size:12px;color:var(--c-muted)">Find the best plan for your business!</span>
-        <span class="btn-ghost">See Plans</span>
-        <span style="font-size:12px;color:var(--c-muted)">Docs ↗</span>
-        <div class="avatar">DD</div>
+        <span class="promo-note">🚀 Find the best plan for your business!</span>
+        <button type="button" class="btn-plan">See Plans</button>
+        <span class="icbtn"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.6C6.3 2.6 5 4 5 5.7V8.1L3.7 10.3C3.5 10.6 3.7 11 4.1 11H11.9C12.3 11 12.5 10.6 12.3 10.3L11 8.1V5.7C11 4 9.7 2.6 8 2.6Z"/><path d="M6.7 12.4C6.9 13 7.4 13.4 8 13.4C8.6 13.4 9.1 13 9.3 12.4"/></svg></span>
+        <span class="icbtn"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="2.4" width="10" height="11.2" rx="1.3"/><path d="M5.4 5.5H10.6M5.4 8H10.6M5.4 10.5H8.5"/></svg></span>
+        <span class="who" data-nav="workspace-placeholder">
+          <svg class="ic" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="5.6" r="2.4"/><path d="M3.3 13C3.3 10.3 5.4 8.8 8 8.8C10.6 8.8 12.7 10.3 12.7 13"/></svg>
+          dmddesign
+          <svg class="ic" width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6L8 10L12 6"/></svg>
+        </span>
       </div>
     </div>
 
@@ -324,7 +396,7 @@
           </div>
           <div class="stat">
             <p class="lbl">Compute Units Today</p>
-            <span class="val">0</span><span style="font-size:12px;color:var(--c-muted)"> / 1,000,000</span>
+            <span class="val">0</span><span style="font-size:12px;color:var(--muted);font-weight:600;"> / 1,000,000</span>
             <div class="track"><span style="width:0%"></span></div>
           </div>
           <div class="stat">
@@ -345,36 +417,41 @@
             <span>목적에 맞는 화면으로 바로 이동합니다</span>
           </div>
           <div class="jobgrid">
-            <div class="jobcard build" data-nav="overview" data-scroll="getting-started">
-              <span class="tag">BUILD</span>
+            <div class="jobcard" data-nav="overview" data-scroll="getting-started">
+              <span class="icwrap"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7.3L8 2.5L14 7.3"/><path d="M3.6 6.3V13H6.6V9.3H9.4V13H12.4V6.3"/></svg></span>
+              <span class="tag"><span class="dot"></span>Build</span>
               <h4>API로 서비스 연결하기</h4>
               <p>Getting Started 체크리스트와 Project로 지금 바로 시작합니다.</p>
               <div class="metric">0 / 4 완료</div>
               <span class="go">Getting Started 보기 →</span>
             </div>
-            <div class="jobcard operate" data-nav="payments-transfers">
-              <span class="tag">OPERATE</span>
+            <div class="jobcard" data-nav="payments-transfers">
+              <span class="icwrap"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5.6 3.2H3.6V12.8H5.6M10.4 3.2H12.4V12.8H10.4"/><path d="M8 6V10M9.1 6.9C9.1 6.3 8.6 6 8 6C7.4 6 6.9 6.3 6.9 6.9C6.9 8.1 9.1 7.6 9.1 8.9C9.1 9.4 8.6 9.7 8 9.7C7.4 9.7 6.9 9.4 6.9 8.8"/></svg></span>
+              <span class="tag"><span class="dot"></span>Operate</span>
               <h4>입출금 상태 확인하기</h4>
               <p>거래·이체가 정상적으로 처리되고 있는지 확인합니다.</p>
               <div class="metric">Payments &amp; Transfers API</div>
               <span class="go">거래 확인하기 →</span>
             </div>
-            <div class="jobcard manage" data-nav="asset-account">
-              <span class="tag">MANAGE</span>
+            <div class="jobcard" data-nav="asset-account">
+              <span class="icwrap"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4.3" width="12" height="8.7" rx="1.6"/><path d="M2 6.7H14"/><rect x="9.6" y="8.4" width="3" height="2" rx="0.6"/></svg></span>
+              <span class="tag"><span class="dot"></span>Manage</span>
               <h4>보유 자산 현황 보기</h4>
               <p>여러 지갑·체인에 흩어진 자산을 한눈에 확인합니다.</p>
               <div class="metric">Asset &amp; Account API</div>
               <span class="go">자산 보기 →</span>
             </div>
-            <div class="jobcard investigate" data-nav="txs-provenance">
-              <span class="tag">INVESTIGATE</span>
+            <div class="jobcard" data-nav="txs-provenance">
+              <span class="icwrap"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.2 9.8L11 5"/><path d="M7 5H11V9"/><path d="M3.5 7V12C3.5 12.55 3.95 13 4.5 13H9.3"/></svg></span>
+              <span class="tag"><span class="dot"></span>Investigate</span>
               <h4>거래 내역 조사하기</h4>
               <p>특정 지갑·거래의 흐름을 끝까지 추적합니다.</p>
               <div class="metric">Txs &amp; Provenance API</div>
               <span class="go">조사 시작하기 →</span>
             </div>
-            <div class="jobcard analyze" data-nav="datashare">
-              <span class="tag">ANALYZE</span>
+            <div class="jobcard" data-nav="datashare">
+              <span class="icwrap"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 13V9.5M8 13V5M12.5 13V7.3"/></svg></span>
+              <span class="tag"><span class="dot"></span>Analyze</span>
               <h4>대규모 데이터 분석하기</h4>
               <p>온체인 데이터를 사내 분석 환경으로 가져옵니다.</p>
               <div class="metric">Datashare · BETA</div>
@@ -438,38 +515,37 @@
             <div class="card">
               <div class="card-h">
                 <h3>Usage Detail</h3>
-                <div style="display:flex;align-items:center;gap:12px;">
-                  <div class="tabs" id="usage-tabs">
-                    <button type="button" class="active" data-tab="elastic">Elastic</button>
-                    <button type="button" data-tab="dedicated">Dedicated</button>
-                  </div>
-                  <span class="meta" data-panel="elastic">2026-07-01 – 2026-07-29</span>
-                </div>
+                <span class="meta" data-panel="elastic">2026-07-01 – 2026-07-29</span>
               </div>
               <div class="card-b">
+                <div class="tabs" id="usage-tabs" style="margin-bottom:16px;">
+                  <button type="button" class="active" data-tab="elastic">Elastic</button>
+                  <button type="button" data-tab="dedicated">Dedicated</button>
+                </div>
+
                 <div data-panel="elastic">
                   <div class="gauge-lbl"><span class="l">Prepaid Compute Units (Daily)</span><span class="r">0 CU · 0%</span></div>
-                  <div class="track" style="height:8px;margin-top:0;"><span style="width:0%"></span></div>
+                  <div class="track" style="height:7px;margin-top:0;"><span style="width:0%"></span></div>
+
                   <div class="usage-row" style="margin-top:18px;">
                     <div class="empty-mini">
-                      <div class="ic"></div>
                       <div class="t">By Projects — 데이터 없음</div>
                       <div class="d">첫 API 호출 이후 프로젝트별 사용량이 여기 표시됩니다</div>
                     </div>
                     <div class="empty-mini">
-                      <div class="ic"></div>
                       <div class="t">By APIs — 데이터 없음</div>
                       <div class="d">Aptos Indexer / Webhook / Stream / Web3 Data / Node API별 분포가 여기 표시됩니다</div>
                     </div>
                   </div>
+
                   <div class="autoscale">
                     <div><div class="l">Auto-Scaling</div><div class="d">사용량이 한도를 초과하면 자동으로 확장됩니다</div></div>
                     <button type="button" class="swtoggle" id="autoscale-toggle" aria-pressed="false" aria-label="Auto-Scaling 켜기/끄기"></button>
                   </div>
                 </div>
+
                 <div data-panel="dedicated" style="display:none;">
-                  <div class="empty-state" style="padding:32px 16px;margin:0;">
-                    <div class="ic"></div>
+                  <div class="empty-state" style="padding:26px 16px;margin:0;">
                     <h3 style="font-size:13.5px;">아직 Dedicated 프로젝트가 없습니다</h3>
                     <p>트래픽이 많거나 격리된 리소스가 필요하다면 전용 노드로 구성된 Dedicated 플랜을 문의해 보세요.</p>
                     <span class="btn-sm dark" style="margin-top:6px;">Contact Us</span>
@@ -483,15 +559,15 @@
           <div class="col">
             <div class="promo">
               <div style="display:flex;gap:6px;margin-bottom:2px;">
-                <span style="font-size:9px;font-weight:800;letter-spacing:.04em;background:rgba(23,217,143,.18);color:var(--c-accent);padding:2px 7px;border-radius:999px;">0% FEE</span>
-                <span style="font-size:9px;font-weight:800;letter-spacing:.04em;background:rgba(255,255,255,.1);color:#B7CFC4;padding:2px 7px;border-radius:999px;">ENTERPRISE</span>
+                <span style="font-size:9px;font-weight:800;letter-spacing:.04em;background:rgba(23,217,143,.18);color:var(--accent);padding:2px 7px;border-radius:999px;">0% FEE</span>
+                <span style="font-size:9px;font-weight:800;letter-spacing:.04em;background:rgba(255,255,255,.1);color:#AFC7BC;padding:2px 7px;border-radius:999px;">ENTERPRISE</span>
               </div>
               <p class="k">Security</p>
               <p class="t">Non-Custodial Solana Staking</p>
               <p class="d">기관 표준의 보안으로 Solana를 스테이킹하세요.</p>
               <span class="cta">Start Staking →</span>
               <div style="display:flex;gap:5px;margin-top:14px;">
-                <span style="width:5px;height:5px;border-radius:50%;background:var(--c-accent);"></span>
+                <span style="width:5px;height:5px;border-radius:50%;background:var(--accent);"></span>
                 <span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);"></span>
                 <span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);"></span>
               </div>
@@ -513,7 +589,7 @@
             <div class="card">
               <div class="card-h"><h3>Payment Details</h3></div>
               <div class="card-b">
-                <p style="font-size:12px;color:var(--c-muted);margin:0 0 12px;">등록된 결제 수단이 없습니다.</p>
+                <p style="font-size:12px;color:var(--muted);margin:0 0 12px;">등록된 결제 수단이 없습니다.</p>
                 <div class="btn-secondary">+ Add Payment Method</div>
               </div>
             </div>
@@ -529,19 +605,19 @@
           <p>7개 체인의 데이터를 일관된 API 형태로 제공합니다. 목적에 따라 세 영역으로 나누어 두었습니다.</p>
         </div>
         <div class="card">
-          <div class="card-b">
+          <div class="card-b pt">
             <div class="api-cat" data-nav="asset-account">
-              <span class="ic">◆</span>
+              <span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4.3" width="12" height="8.7" rx="1.6"/><path d="M2 6.7H14"/><rect x="9.6" y="8.4" width="3" height="2" rx="0.6"/></svg></span>
               <div class="body"><div class="t">Asset &amp; Account</div><div class="d">Balance, token holdings, 지갑·계정 단위 자산 조회 — MANAGE 업무에 대응</div></div>
               <span class="meta">12 endpoints</span>
             </div>
             <div class="api-cat" data-nav="payments-transfers">
-              <span class="ic">◆</span>
+              <span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5.6 3.2H3.6V12.8H5.6M10.4 3.2H12.4V12.8H10.4"/><path d="M8 6V10M9.1 6.9C9.1 6.3 8.6 6 8 6C7.4 6 6.9 6.3 6.9 6.9C6.9 8.1 9.1 7.6 9.1 8.9C9.1 9.4 8.6 9.7 8 9.7C7.4 9.7 6.9 9.4 6.9 8.8"/></svg></span>
               <div class="body"><div class="t">Payments &amp; Transfers</div><div class="d">입출금, 이체 이벤트 — OPERATE 업무에 대응</div></div>
               <span class="meta">14 endpoints</span>
             </div>
             <div class="api-cat" data-nav="txs-provenance">
-              <span class="ic">◆</span>
+              <span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.2 9.8L11 5"/><path d="M7 5H11V9"/><path d="M3.5 7V12C3.5 12.55 3.95 13 4.5 13H9.3"/></svg></span>
               <div class="body"><div class="t">Txs &amp; Provenance</div><div class="d">거래 상세, 연관 지갑, 이력 추적 — INVESTIGATE 업무에 대응</div></div>
               <span class="meta">18 endpoints</span>
             </div>
@@ -557,37 +633,37 @@
           <p>여러 지갑과 체인에 흩어진 디지털 자산을 한 화면에서 확인합니다. (MANAGE)</p>
         </div>
         <div class="flowbar">
-          <span class="n" style="background:var(--job-manage-tint);color:var(--job-manage);">Assets</span><span class="a">→</span>
-          <span class="n" style="background:var(--job-manage-tint);color:var(--job-manage);">Wallet</span><span class="a">→</span>
-          <span class="n" style="background:var(--job-manage-tint);color:var(--job-manage);">Chain</span><span class="a">→</span>
-          <span class="n" style="background:var(--job-manage-tint);color:var(--job-manage);">Transfer</span>
+          <span class="n">Assets</span><span class="a">→</span>
+          <span class="n">Wallet</span><span class="a">→</span>
+          <span class="n">Chain</span><span class="a">→</span>
+          <span class="n">Transfer</span>
         </div>
         <div class="stats">
-          <div class="stat"><p class="lbl">Total Assets</p><span class="val" style="font-size:22px;">$48.2M</span><p class="sub" style="color:var(--good);">+2.4% (24h)</p></div>
-          <div class="stat"><p class="lbl">Chains</p><span class="val" style="font-size:22px;">7</span><p class="sub">tracked</p></div>
-          <div class="stat"><p class="lbl">Wallets</p><span class="val" style="font-size:22px;">24</span><p class="sub">across all chains</p></div>
-          <div class="stat"><p class="lbl">Large Transfers (24h)</p><span class="val" style="font-size:22px;">3</span><p class="sub">&gt; $100,000</p></div>
+          <div class="stat"><p class="lbl">Total Assets</p><span class="val">$48.2M</span><p class="sub good">+2.4% (24h)</p></div>
+          <div class="stat"><p class="lbl">Chains</p><span class="val">7</span><p class="sub">tracked</p></div>
+          <div class="stat"><p class="lbl">Wallets</p><span class="val">24</span><p class="sub">across all chains</p></div>
+          <div class="stat"><p class="lbl">Large Transfers (24h)</p><span class="val">3</span><p class="sub">&gt; $100,000</p></div>
         </div>
         <div class="layout-2col">
           <div class="col">
             <div class="card">
               <div class="card-h"><h3>Asset Distribution by Chain</h3></div>
-              <div class="card-b">
+              <div class="card-b pt">
                 <div class="distbar">
-                  <span style="width:42%;background:#2a78d6;"></span>
-                  <span style="width:18%;background:#eb6834;"></span>
-                  <span style="width:15%;background:#1baf7a;"></span>
-                  <span style="width:12%;background:#c98500;"></span>
-                  <span style="width:8%;background:#c2568a;"></span>
-                  <span style="width:5%;background:#8f8a7d;"></span>
+                  <span style="width:42%;background:var(--chain-1);"></span>
+                  <span style="width:18%;background:var(--chain-2);"></span>
+                  <span style="width:15%;background:var(--chain-3);"></span>
+                  <span style="width:12%;background:var(--chain-4);"></span>
+                  <span style="width:8%;background:var(--chain-5);"></span>
+                  <span style="width:5%;background:var(--chain-6);"></span>
                 </div>
                 <div class="distlegend">
-                  <div class="row"><span class="sw" style="background:#2a78d6;"></span><span class="name">Ethereum</span><span class="pct">42% · $20.2M</span></div>
-                  <div class="row"><span class="sw" style="background:#eb6834;"></span><span class="name">Polygon</span><span class="pct">18% · $8.7M</span></div>
-                  <div class="row"><span class="sw" style="background:#1baf7a;"></span><span class="name">Aptos</span><span class="pct">15% · $7.2M</span></div>
-                  <div class="row"><span class="sw" style="background:#c98500;"></span><span class="name">Arbitrum</span><span class="pct">12% · $5.8M</span></div>
-                  <div class="row"><span class="sw" style="background:#c2568a;"></span><span class="name">Base</span><span class="pct">8% · $3.9M</span></div>
-                  <div class="row"><span class="sw" style="background:#8f8a7d;"></span><span class="name">Others</span><span class="pct">5% · $2.4M</span></div>
+                  <div class="row"><span class="sw" style="background:var(--chain-1);"></span><span class="name">Ethereum</span><span class="pct">42% · $20.2M</span></div>
+                  <div class="row"><span class="sw" style="background:var(--chain-2);"></span><span class="name">Polygon</span><span class="pct">18% · $8.7M</span></div>
+                  <div class="row"><span class="sw" style="background:var(--chain-3);"></span><span class="name">Aptos</span><span class="pct">15% · $7.2M</span></div>
+                  <div class="row"><span class="sw" style="background:var(--chain-4);"></span><span class="name">Arbitrum</span><span class="pct">12% · $5.8M</span></div>
+                  <div class="row"><span class="sw" style="background:var(--chain-5);"></span><span class="name">Base</span><span class="pct">8% · $3.9M</span></div>
+                  <div class="row"><span class="sw" style="background:var(--chain-6);"></span><span class="name">Others</span><span class="pct">5% · $2.4M</span></div>
                 </div>
               </div>
             </div>
@@ -635,22 +711,22 @@
           <p>서비스에서 발생한 입출금과 거래가 정상 처리되고 있는지 확인합니다. (OPERATE)</p>
         </div>
         <div class="flowbar">
-          <span class="n" style="background:var(--job-operate-tint);color:var(--job-operate);">Transaction</span><span class="a">→</span>
-          <span class="n" style="background:var(--job-operate-tint);color:var(--job-operate);">Transfer</span><span class="a">→</span>
-          <span class="n" style="background:var(--job-operate-tint);color:var(--job-operate);">Wallet</span><span class="a">→</span>
-          <span class="n" style="background:var(--job-operate-tint);color:var(--job-operate);">Status</span>
+          <span class="n">Transaction</span><span class="a">→</span>
+          <span class="n">Transfer</span><span class="a">→</span>
+          <span class="n">Wallet</span><span class="a">→</span>
+          <span class="n">Status</span>
         </div>
         <div class="stats">
-          <div class="stat"><p class="lbl">Deposits (24h)</p><span class="val" style="font-size:22px;">482</span><p class="sub" style="color:var(--good);">+41 vs yesterday</p></div>
-          <div class="stat"><p class="lbl">Withdrawals (24h)</p><span class="val" style="font-size:22px;">311</span><p class="sub">stable</p></div>
-          <div class="stat"><p class="lbl">Failed</p><span class="val" style="font-size:22px;">7</span><p class="sub" style="color:var(--crit);">+3 vs yesterday</p></div>
-          <div class="stat"><p class="lbl">Large Transactions</p><span class="val" style="font-size:22px;">4</span><p class="sub">&gt; $100,000</p></div>
+          <div class="stat"><p class="lbl">Deposits (24h)</p><span class="val">482</span><p class="sub good">+41 vs yesterday</p></div>
+          <div class="stat"><p class="lbl">Withdrawals (24h)</p><span class="val">311</span><p class="sub">stable</p></div>
+          <div class="stat"><p class="lbl">Failed</p><span class="val">7</span><p class="sub crit">+3 vs yesterday</p></div>
+          <div class="stat"><p class="lbl">Large Transactions</p><span class="val">4</span><p class="sub">&gt; $100,000</p></div>
         </div>
         <div class="layout-2col">
           <div class="col">
             <div class="card">
               <div class="card-h"><h3>Recent Transactions</h3></div>
-              <div class="card-b">
+              <div class="card-b pt">
                 <div class="filterrow" id="opFilters">
                   <span class="fchip active" data-status="all">All</span>
                   <span class="fchip" data-status="success">Success</span>
@@ -690,14 +766,14 @@
           <p>특정 지갑이나 거래의 활동을 추적하고 검증합니다. (INVESTIGATE)</p>
         </div>
         <div class="flowbar">
-          <span class="n" style="background:var(--job-investigate-tint);color:var(--job-investigate);">Wallet</span><span class="a">→</span>
-          <span class="n" style="background:var(--job-investigate-tint);color:var(--job-investigate);">Transaction</span><span class="a">→</span>
-          <span class="n" style="background:var(--job-investigate-tint);color:var(--job-investigate);">Related Activity</span><span class="a">→</span>
-          <span class="n" style="background:var(--job-investigate-tint);color:var(--job-investigate);">History</span>
+          <span class="n">Wallet</span><span class="a">→</span>
+          <span class="n">Transaction</span><span class="a">→</span>
+          <span class="n">Related Activity</span><span class="a">→</span>
+          <span class="n">History</span>
         </div>
-        <div class="card" style="margin-bottom:16px;">
-          <div class="card-b">
-            <input type="text" value="0x4b81…22aF" placeholder="지갑 주소 또는 트랜잭션 해시 검색…" style="width:100%;border:1.5px solid var(--c-border);background:var(--c-canvas);border-radius:12px;padding:13px 16px;font-size:13.5px;outline:none;">
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-b pt">
+            <input type="text" value="0x4b81…22aF" placeholder="지갑 주소 또는 트랜잭션 해시 검색…" style="width:100%;border:1px solid var(--border);background:var(--page-bg);border-radius:var(--radius-md);padding:12px 14px;font-size:13.5px;outline:none;">
           </div>
         </div>
         <div class="layout-2col">
@@ -707,7 +783,7 @@
               <div class="card-b">
                 <div class="timeline">
                   <div class="tl-item"><div class="dotwrap"><span class="d" style="background:var(--good);"></span></div><div class="body"><div class="t">Received from 0x9f2a…7cE1</div><div class="d2">Withdrawal settlement</div></div><span class="amt">+12.4 ETH</span><span class="time">3m</span></div>
-                  <div class="tl-item"><div class="dotwrap"><span class="d" style="background:var(--job-investigate);"></span></div><div class="body"><div class="t">Approval granted to Uniswap Router</div><div class="d2">Unlimited USDC allowance</div></div><span class="amt">—</span><span class="time">2h</span></div>
+                  <div class="tl-item"><div class="dotwrap"><span class="d" style="background:var(--blue);"></span></div><div class="body"><div class="t">Approval granted to Uniswap Router</div><div class="d2">Unlimited USDC allowance</div></div><span class="amt">—</span><span class="time">2h</span></div>
                   <div class="tl-item"><div class="dotwrap"><span class="d" style="background:var(--good);"></span></div><div class="body"><div class="t">Sent to 0x71bc…d902</div><div class="d2">Transfer</div></div><span class="amt">-8,000 USDC</span><span class="time">1d</span></div>
                   <div class="tl-item"><div class="dotwrap"><span class="d" style="background:var(--good);"></span></div><div class="body"><div class="t">Received from 0x0c9d…77e4</div><div class="d2">Transfer</div></div><span class="amt">+2.0 ETH</span><span class="time">2d</span></div>
                 </div>
@@ -743,19 +819,20 @@
           <p>대규모 온체인 데이터를 사내 데이터 환경으로 가져옵니다. (ANALYZE)</p>
         </div>
         <div class="flowbar">
-          <span class="n" style="background:var(--job-analyze-tint);color:var(--job-analyze);">Dataset</span><span class="a">→</span>
-          <span class="n" style="background:var(--job-analyze-tint);color:var(--job-analyze);">Schema</span><span class="a">→</span>
-          <span class="n" style="background:var(--job-analyze-tint);color:var(--job-analyze);">Datashare</span><span class="a">→</span>
-          <span class="n" style="background:var(--job-analyze-tint);color:var(--job-analyze);">Pipeline</span>
+          <span class="n">Dataset</span><span class="a">→</span>
+          <span class="n">Schema</span><span class="a">→</span>
+          <span class="n">Datashare</span><span class="a">→</span>
+          <span class="n">Pipeline</span>
         </div>
         <div class="layout-2col">
           <div class="col">
             <div class="card">
               <div class="card-h"><h3>Dataset Catalog</h3><span class="meta">18 datasets</span></div>
-              <div class="card-b">
-                <div class="dataset-row"><span class="ic">DB</span><div class="body"><div class="t">Ethereum · Transactions</div><div class="d">Updated hourly · ~2.1B rows</div></div><div class="actions"><span class="btn-sm ghost">Schema</span><span class="btn-sm dark">Configure</span></div></div>
-                <div class="dataset-row"><span class="ic">DB</span><div class="body"><div class="t">Ethereum · Token Transfers</div><div class="d">Updated hourly · ~4.8B rows</div></div><div class="actions"><span class="btn-sm ghost">Schema</span><span class="btn-sm dark">Configure</span></div></div>
-                <div class="dataset-row"><span class="ic">DB</span><div class="body"><div class="t">Multi-chain · Wallet Balances</div><div class="d">Updated daily · 7 chains</div></div><div class="actions"><span class="btn-sm ghost">Schema</span><span class="btn-sm dark">Configure</span></div></div>
+              <div class="card-b pt">
+                <div class="dataset-row"><span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="8" cy="4" rx="5" ry="1.8"/><path d="M3 4V12C3 12.99 5.24 13.8 8 13.8C10.76 13.8 13 12.99 13 12V4"/><path d="M3 8C3 8.99 5.24 9.8 8 9.8C10.76 9.8 13 8.99 13 8"/></svg></span><div class="body"><div class="t">Ethereum · Transactions</div><div class="d">Updated hourly · ~2.1B rows · full history</div></div><div class="actions"><span class="btn-sm ghost">View Schema</span><span class="btn-sm dark">Configure</span></div></div>
+                <div class="dataset-row"><span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="8" cy="4" rx="5" ry="1.8"/><path d="M3 4V12C3 12.99 5.24 13.8 8 13.8C10.76 13.8 13 12.99 13 12V4"/><path d="M3 8C3 8.99 5.24 9.8 8 9.8C10.76 9.8 13 8.99 13 8"/></svg></span><div class="body"><div class="t">Ethereum · Token Transfers</div><div class="d">Updated hourly · ~4.8B rows</div></div><div class="actions"><span class="btn-sm ghost">View Schema</span><span class="btn-sm dark">Configure</span></div></div>
+                <div class="dataset-row"><span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="8" cy="4" rx="5" ry="1.8"/><path d="M3 4V12C3 12.99 5.24 13.8 8 13.8C10.76 13.8 13 12.99 13 12V4"/><path d="M3 8C3 8.99 5.24 9.8 8 9.8C10.76 9.8 13 8.99 13 8"/></svg></span><div class="body"><div class="t">Polygon · Token Transfers</div><div class="d">Updated hourly · ~3.2B rows</div></div><div class="actions"><span class="btn-sm ghost">View Schema</span><span class="btn-sm dark">Configure</span></div></div>
+                <div class="dataset-row"><span class="ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="8" cy="4" rx="5" ry="1.8"/><path d="M3 4V12C3 12.99 5.24 13.8 8 13.8C10.76 13.8 13 12.99 13 12V4"/><path d="M3 8C3 8.99 5.24 9.8 8 9.8C10.76 9.8 13 8.99 13 8"/></svg></span><div class="body"><div class="t">Multi-chain · Wallet Balances</div><div class="d">Updated daily · snapshot, 7 chains</div></div><div class="actions"><span class="btn-sm ghost">View Schema</span><span class="btn-sm dark">Configure</span></div></div>
               </div>
             </div>
             <div class="card">
@@ -772,7 +849,7 @@ value            <span class="c2">decimal(38,0)</span></div>
           </div>
           <div class="col">
             <div class="card">
-              <div class="card-b">
+              <div class="card-b pt">
                 <div class="btn-primary" style="margin-top:0;">+ Configure Datashare</div>
                 <div class="btn-secondary" style="margin-top:10px;">Request New Dataset</div>
               </div>
@@ -792,9 +869,19 @@ value            <span class="c2">decimal(38,0)</span></div>
       <!-- ============ PLACEHOLDER (out of prototype scope) ============ -->
       <section class="page-view" id="pv-placeholder">
         <div class="empty-state">
-          <div class="ic"></div>
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M8 5.3V8.6M8 10.7V10.75"/></svg></div>
           <h3 id="ph-title">Coming soon</h3>
           <p>이 화면은 이번 Overview 개선 프로토타입의 범위 밖입니다.</p>
+          <span class="btn-sm dark" data-nav="overview" style="margin-top:6px;">← Overview로 돌아가기</span>
+        </div>
+      </section>
+
+      <!-- ============ WORKSPACE PLACEHOLDER ============ -->
+      <section class="page-view" id="pv-workspace-placeholder">
+        <div class="empty-state">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="5.6" r="2.4"/><path d="M3.3 13C3.3 10.3 5.4 8.8 8 8.8C10.6 8.8 12.7 10.3 12.7 13"/></svg></div>
+          <h3>계정 메뉴</h3>
+          <p>이번 Entry Hub 프로토타입의 범위 밖입니다.</p>
           <span class="btn-sm dark" data-nav="overview" style="margin-top:6px;">← Overview로 돌아가기</span>
         </div>
       </section>
