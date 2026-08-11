@@ -7,9 +7,16 @@
 <meta name="description" content="Nodit Console — Overview 화면 개선 프로토타입">
 <style>
   :root{
-    --page-bg:#FFFFFF; --panel-bg:#F6F8F7; --panel-bg-2:#EEF2F0; --ink:#131715; --muted:#697A72; --border:#E6EAE7;
+    --page-bg:#FFFFFF; --panel-bg:#F2F5F3; --panel-bg-2:#E8ECE9; --ink:#131715; --muted:#67766E; --border:#DEE4E0;
     --accent:#17D97F; --accent-strong:#0A7A46; --accent-tint:#E3F8EE; --blue:#2F6FED; --blue-tint:#EAF1FE;
-    --radius-lg:16px; --radius-md:10px; --radius-sm:8px;
+    --radius-lg:18px; --radius-md:10px; --radius-sm:8px;
+    --shadow:0 1px 2px rgba(19,23,21,.04), 0 10px 24px -16px rgba(19,23,21,.18);
+    --shadow-hover:0 2px 4px rgba(19,23,21,.05), 0 16px 32px -14px rgba(19,23,21,.24);
+    --job-build:#2F6FED; --job-build-tint:#EAF1FE;
+    --job-operate:#E8862E; --job-operate-tint:#FDF0E2;
+    --job-manage:#0A7A46; --job-manage-tint:#E3F8EE;
+    --job-investigate:#7B4FE0; --job-investigate-tint:#F1ECFC;
+    --job-analyze:#0FA0A0; --job-analyze-tint:#E2F6F6;
 
     --sidebar:#0B0E0C; --sidebar-ink:#D3DAD6; --sidebar-muted:#6B7A72; --sidebar-active:#17D97F; --sidebar-active-ink:#06331F; --sidebar-hover:#161C19; --sidebar-border:#1D2420;
 
@@ -84,14 +91,14 @@
   .who{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
   .who .ic{color:var(--muted);}
 
-  .content{flex:1; overflow-y:auto; padding:26px 28px 64px;}
+  .content{flex:1; overflow-y:auto; padding:26px 28px 64px; background:var(--panel-bg);}
   .page-view{display:none;}
   .page-view.active{display:block;}
   .content h2{font-size:25px;margin:0 0 22px;letter-spacing:-.01em;font-weight:800;}
 
   /* Stat strip */
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
-  .stat{background:var(--panel-bg);border-radius:var(--radius-lg);padding:16px 18px;}
+  .stat{background:var(--page-bg);border:1px solid var(--border);box-shadow:var(--shadow);border-radius:var(--radius-lg);padding:16px 18px;}
   .stat .lbl{font-size:11.5px;color:var(--muted);font-weight:600;margin:0 0 9px;}
   .stat .val{font-size:22px;font-weight:800;letter-spacing:-.01em;}
   .stat .sub{font-size:12px;color:var(--muted);margin-top:7px;}
@@ -113,23 +120,31 @@
   .jobsection-head span{font-size:12px; color:var(--muted);}
   .jobgrid{display:grid; grid-template-columns:repeat(5,1fr); gap:10px;}
   .jobcard{
-    background:var(--panel-bg); border-radius:var(--radius-lg); padding:16px 16px 15px;
-    cursor:pointer; display:flex; flex-direction:column; gap:10px; transition:background .12s;
+    background:var(--page-bg); border:1px solid var(--border); box-shadow:var(--shadow); border-radius:var(--radius-lg); padding:16px;
+    cursor:pointer; display:flex; flex-direction:column; gap:12px; transition:border-color .12s,transform .12s,box-shadow .12s;
   }
-  .jobcard:hover{background:var(--panel-bg-2);}
-  .jobcard .icwrap{width:32px;height:32px;border-radius:9px;background:var(--page-bg);display:flex;align-items:center;justify-content:center;}
-  .jobcard .icwrap .ic{width:17px;height:17px;color:var(--ink);}
-  .jobcard .tag{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;}
-  .jobcard .tag .dot{width:5px;height:5px;border-radius:50%;background:var(--accent);}
-  .jobcard h4{margin:0; font-size:13.5px; font-weight:700; line-height:1.35;}
-  .jobcard p{margin:0; font-size:12px; color:var(--muted); line-height:1.5;}
-  .jobcard .metric{font-size:11px; color:var(--muted); margin-top:1px;}
-  .jobcard .go{font-size:12px; font-weight:700; color:var(--accent-strong); display:flex; align-items:center; gap:3px; margin-top:2px;}
+  .jobcard:hover{border-color:var(--ink); transform:translateY(-2px); box-shadow:var(--shadow-hover);}
+  .jobcard .icwrap{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none;}
+  .jobcard .icwrap .ic{width:17px;height:17px;}
+  .jobcard .icwrap.build{background:var(--job-build-tint);color:var(--job-build);}
+  .jobcard .icwrap.operate{background:var(--job-operate-tint);color:var(--job-operate);}
+  .jobcard .icwrap.manage{background:var(--job-manage-tint);color:var(--job-manage);}
+  .jobcard .icwrap.investigate{background:var(--job-investigate-tint);color:var(--job-investigate);}
+  .jobcard .icwrap.analyze{background:var(--job-analyze-tint);color:var(--job-analyze);}
+  .jobcard .tag{font-size:10.5px; font-weight:800; letter-spacing:.05em; color:var(--muted); text-transform:uppercase;}
+  .jobcard h4{margin:5px 0 0; font-size:14px; font-weight:800; line-height:1.3; letter-spacing:-.005em;}
+  .jobcard p{margin:0; font-size:12px; color:var(--muted); line-height:1.5; flex:1;}
+  .jobcard .go{align-self:flex-start; font-size:12px; font-weight:700; padding:7px 12px; border-radius:999px; margin-top:2px;}
+  .jobcard .go.build{background:var(--job-build-tint);color:var(--job-build);}
+  .jobcard .go.operate{background:var(--job-operate-tint);color:var(--job-operate);}
+  .jobcard .go.manage{background:var(--job-manage-tint);color:var(--job-manage);}
+  .jobcard .go.investigate{background:var(--job-investigate-tint);color:var(--job-investigate);}
+  .jobcard .go.analyze{background:var(--job-analyze-tint);color:var(--job-analyze);}
 
   /* Grid columns */
   .grid{display:grid;grid-template-columns:1.65fr 1fr;gap:14px;align-items:start;}
   .col{display:flex;flex-direction:column;gap:14px;}
-  .card{background:var(--panel-bg);border-radius:var(--radius-lg);overflow:hidden;}
+  .card{background:var(--page-bg);border:1px solid var(--border);box-shadow:var(--shadow);border-radius:var(--radius-lg);overflow:hidden;}
   .card-h{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px; gap:12px;}
   .card-h h3{margin:0;font-size:14.5px;font-weight:800;}
   .card-h .meta{font-size:12px;color:var(--muted);}
@@ -149,7 +164,7 @@
   .step .t{font-size:13.5px;font-weight:600;}
   .step.done .t{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--border);}
   .step .d{font-size:12px;color:var(--muted);margin-top:3px;}
-  .step .cta{margin-left:auto;font-size:12px;font-weight:700;color:var(--ink);background:var(--page-bg);border:1px solid var(--border);padding:7px 13px;border-radius:var(--radius-md);white-space:nowrap;cursor:pointer;}
+  .step .cta{margin-left:auto;font-size:12px;font-weight:700;color:var(--ink);background:var(--panel-bg-2);border:1px solid var(--border);padding:7px 13px;border-radius:var(--radius-md);white-space:nowrap;cursor:pointer;}
   .step .cta:hover{background:var(--panel-bg-2);}
 
   /* Tables */
@@ -181,12 +196,21 @@
   .promo .d{font-size:12px;color:#AFC7BC;line-height:1.55;margin:0 0 13px;}
   .promo .cta{display:inline-flex;font-size:12px;font-weight:700;background:#fff;color:#0B1210;padding:8px 15px;border-radius:999px;cursor:pointer;}
 
-  .plan-feat{display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:13px;border-top:1px solid var(--border);}
-  .plan-feat:first-child{border-top:none;}
-  .plan-feat .v{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600;}
-  .btn-primary{width:100%;text-align:center;font-size:13px;font-weight:700;background:var(--ink);color:var(--page-bg);padding:11px;border-radius:var(--radius-md);margin-top:13px;cursor:pointer;}
+  .planmeter-top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:8px;}
+  .planmeter-top .l{color:var(--muted);font-weight:600;}
+  .planmeter-top .r{font-variant-numeric:tabular-nums;font-weight:700;}
+  .track.lg{height:10px;}
+  .plan-quickrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+  .plan-quickrow > div{background:var(--panel-bg);border-radius:var(--radius-md);padding:10px 12px;}
+  .plan-quickrow .qk{display:block;font-size:10.5px;color:var(--muted);font-weight:600;margin-bottom:3px;}
+  .plan-quickrow .qv{display:block;font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;}
+  .plan-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px;}
+  .plan-actions .btn-primary{margin-top:0;flex:1;}
+  .link-sm{font-size:12px;color:var(--blue);font-weight:600;cursor:pointer;white-space:nowrap;}
+  .link-sm:hover{text-decoration:underline;}
+  .btn-primary{width:100%;text-align:center;font-size:13px;font-weight:700;background:var(--ink);color:var(--page-bg);padding:11px;border-radius:999px;margin-top:13px;cursor:pointer;}
   .btn-primary:hover{background:#000;}
-  .btn-secondary{width:100%;text-align:center;font-size:13px;font-weight:700;border:1px solid var(--border);color:var(--ink);padding:11px;border-radius:var(--radius-md);cursor:pointer;background:var(--page-bg);}
+  .btn-secondary{width:100%;text-align:center;font-size:13px;font-weight:700;border:1px solid var(--border);color:var(--ink);padding:11px;border-radius:999px;cursor:pointer;background:var(--page-bg);}
   .btn-secondary:hover{background:var(--panel-bg-2);}
 
   .tabs{display:flex;gap:20px;border-bottom:1px solid var(--border);}
@@ -220,9 +244,12 @@
   .listrow:hover{color:var(--accent-strong);}
   .listrow .k{font-size:10px;font-weight:700;color:var(--muted);background:var(--panel-bg-2);padding:2px 7px;border-radius:5px;flex:none;text-transform:uppercase;}
 
-  .distbar{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px;margin:4px 0 14px;}
-  .distbar span{display:block;height:100%;}
-  .distlegend{display:flex;flex-direction:column;gap:8px;}
+  .donutrow{display:flex;align-items:center;gap:24px;}
+  .donut{width:130px;height:130px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;}
+  .donut-hole{width:80px;height:80px;border-radius:50%;background:var(--page-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .donut-hole .dv{font-size:15px;font-weight:800;letter-spacing:-.01em;}
+  .donut-hole .dl{font-size:10px;color:var(--muted);margin-top:2px;}
+  .distlegend{display:flex;flex-direction:column;gap:9px;flex:1;}
   .distlegend .row{display:flex;align-items:center;gap:8px;font-size:12.5px;}
   .distlegend .row .sw{width:8px;height:8px;border-radius:2px;flex:none;}
   .distlegend .row .name{flex:1;}
@@ -245,22 +272,22 @@
 
   .dataset-row{display:flex;align-items:center;gap:13px;padding:14px 0;border-top:1px solid var(--border);}
   .dataset-row:first-child{border-top:none;}
-  .dataset-row .ic{width:32px;height:32px;border-radius:9px;background:var(--page-bg);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none;}
+  .dataset-row .ic{width:32px;height:32px;border-radius:9px;background:var(--panel-bg-2);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none;}
   .dataset-row .ic svg{width:16px;height:16px;}
   .dataset-row .body{flex:1;min-width:0;}
   .dataset-row .t{font-size:13.5px;font-weight:600;}
   .dataset-row .d{font-size:12px;color:var(--muted);margin-top:2px;}
   .dataset-row .actions{flex:none;display:flex;gap:6px;}
-  .btn-sm{font-size:12px;padding:7px 12px;border-radius:var(--radius-md);font-weight:700;cursor:pointer;}
+  .btn-sm{font-size:12px;padding:7px 13px;border-radius:999px;font-weight:700;cursor:pointer;}
   .btn-sm.ghost{border:1px solid var(--border);background:var(--page-bg);color:var(--ink);}
   .btn-sm.dark{background:var(--ink);color:var(--page-bg);}
 
-  .schema-mono{font-family:var(--mono);font-size:12px;background:var(--page-bg);border-radius:var(--radius-sm);padding:14px 16px;line-height:1.85;overflow-x:auto;white-space:pre;}
+  .schema-mono{font-family:var(--mono);font-size:12px;background:var(--panel-bg);border-radius:var(--radius-sm);padding:14px 16px;line-height:1.85;overflow-x:auto;white-space:pre;}
   .schema-mono .c2{color:var(--muted);}
 
   .api-cat{display:flex;align-items:center;gap:13px;padding:13px 0;border-top:1px solid var(--border);}
   .api-cat:first-child{border-top:none;}
-  .api-cat .ic{width:32px;height:32px;border-radius:9px;background:var(--page-bg);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none;}
+  .api-cat .ic{width:32px;height:32px;border-radius:9px;background:var(--panel-bg-2);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none;}
   .api-cat .ic svg{width:16px;height:16px;}
   .api-cat .body{flex:1;min-width:0;}
   .api-cat .t{font-size:13.5px;font-weight:600;}
@@ -268,7 +295,7 @@
   .api-cat .meta{flex:none;text-align:right;font-size:11.5px;color:var(--muted);}
 
   .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 20px;gap:9px;max-width:420px;margin:30px auto;}
-  .empty-state .ic{width:38px;height:38px;border-radius:11px;background:var(--panel-bg);margin-bottom:4px;display:flex;align-items:center;justify-content:center;color:var(--muted);}
+  .empty-state .ic{width:38px;height:38px;border-radius:11px;background:var(--page-bg);border:1px solid var(--border);margin-bottom:4px;display:flex;align-items:center;justify-content:center;color:var(--muted);}
   .empty-state h3{font-size:15px;margin:0;}
   .empty-state p{font-size:12.5px;color:var(--muted);line-height:1.6;margin:0;}
 
@@ -418,44 +445,49 @@
           </div>
           <div class="jobgrid">
             <div class="jobcard" data-nav="overview" data-scroll="getting-started">
-              <span class="icwrap"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7.3L8 2.5L14 7.3"/><path d="M3.6 6.3V13H6.6V9.3H9.4V13H12.4V6.3"/></svg></span>
-              <span class="tag"><span class="dot"></span>Build</span>
-              <h4>API로 서비스 연결하기</h4>
-              <p>Getting Started 체크리스트와 Project로 지금 바로 시작합니다.</p>
-              <div class="metric">0 / 4 완료</div>
-              <span class="go">Getting Started 보기 →</span>
+              <span class="icwrap build"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7.3L8 2.5L14 7.3"/><path d="M3.6 6.3V13H6.6V9.3H9.4V13H12.4V6.3"/></svg></span>
+              <div>
+                <span class="tag">Build</span>
+                <h4>API로 서비스 연결</h4>
+                <p>Key 발급하고 첫 호출까지</p>
+              </div>
+              <span class="go build">시작하기 →</span>
             </div>
             <div class="jobcard" data-nav="payments-transfers">
-              <span class="icwrap"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5.6 3.2H3.6V12.8H5.6M10.4 3.2H12.4V12.8H10.4"/><path d="M8 6V10M9.1 6.9C9.1 6.3 8.6 6 8 6C7.4 6 6.9 6.3 6.9 6.9C6.9 8.1 9.1 7.6 9.1 8.9C9.1 9.4 8.6 9.7 8 9.7C7.4 9.7 6.9 9.4 6.9 8.8"/></svg></span>
-              <span class="tag"><span class="dot"></span>Operate</span>
-              <h4>입출금 상태 확인하기</h4>
-              <p>거래·이체가 정상적으로 처리되고 있는지 확인합니다.</p>
-              <div class="metric">Payments &amp; Transfers API</div>
-              <span class="go">거래 확인하기 →</span>
+              <span class="icwrap operate"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5.6 3.2H3.6V12.8H5.6M10.4 3.2H12.4V12.8H10.4"/><path d="M8 6V10M9.1 6.9C9.1 6.3 8.6 6 8 6C7.4 6 6.9 6.3 6.9 6.9C6.9 8.1 9.1 7.6 9.1 8.9C9.1 9.4 8.6 9.7 8 9.7C7.4 9.7 6.9 9.4 6.9 8.8"/></svg></span>
+              <div>
+                <span class="tag">Operate</span>
+                <h4>입출금 상태 확인</h4>
+                <p>거래 처리 현황 확인</p>
+              </div>
+              <span class="go operate">확인하기 →</span>
             </div>
             <div class="jobcard" data-nav="asset-account">
-              <span class="icwrap"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4.3" width="12" height="8.7" rx="1.6"/><path d="M2 6.7H14"/><rect x="9.6" y="8.4" width="3" height="2" rx="0.6"/></svg></span>
-              <span class="tag"><span class="dot"></span>Manage</span>
-              <h4>보유 자산 현황 보기</h4>
-              <p>여러 지갑·체인에 흩어진 자산을 한눈에 확인합니다.</p>
-              <div class="metric">Asset &amp; Account API</div>
-              <span class="go">자산 보기 →</span>
+              <span class="icwrap manage"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4.3" width="12" height="8.7" rx="1.6"/><path d="M2 6.7H14"/><rect x="9.6" y="8.4" width="3" height="2" rx="0.6"/></svg></span>
+              <div>
+                <span class="tag">Manage</span>
+                <h4>보유 자산 현황</h4>
+                <p>지갑·체인별 자산 확인</p>
+              </div>
+              <span class="go manage">보기 →</span>
             </div>
             <div class="jobcard" data-nav="txs-provenance">
-              <span class="icwrap"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.2 9.8L11 5"/><path d="M7 5H11V9"/><path d="M3.5 7V12C3.5 12.55 3.95 13 4.5 13H9.3"/></svg></span>
-              <span class="tag"><span class="dot"></span>Investigate</span>
-              <h4>거래 내역 조사하기</h4>
-              <p>특정 지갑·거래의 흐름을 끝까지 추적합니다.</p>
-              <div class="metric">Txs &amp; Provenance API</div>
-              <span class="go">조사 시작하기 →</span>
+              <span class="icwrap investigate"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.2 9.8L11 5"/><path d="M7 5H11V9"/><path d="M3.5 7V12C3.5 12.55 3.95 13 4.5 13H9.3"/></svg></span>
+              <div>
+                <span class="tag">Investigate</span>
+                <h4>거래 내역 조사</h4>
+                <p>지갑·거래 흐름 추적</p>
+              </div>
+              <span class="go investigate">조사하기 →</span>
             </div>
             <div class="jobcard" data-nav="datashare">
-              <span class="icwrap"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 13V9.5M8 13V5M12.5 13V7.3"/></svg></span>
-              <span class="tag"><span class="dot"></span>Analyze</span>
-              <h4>대규모 데이터 분석하기</h4>
-              <p>온체인 데이터를 사내 분석 환경으로 가져옵니다.</p>
-              <div class="metric">Datashare · BETA</div>
-              <span class="go">Datashare 보기 →</span>
+              <span class="icwrap analyze"><svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 13V9.5M8 13V5M12.5 13V7.3"/></svg></span>
+              <div>
+                <span class="tag">Analyze</span>
+                <h4>데이터 분석</h4>
+                <p>온체인 데이터 내보내기</p>
+              </div>
+              <span class="go analyze">보기 →</span>
             </div>
           </div>
         </div>
@@ -574,23 +606,18 @@
             </div>
 
             <div class="card">
-              <div class="card-h"><h3>My Plan</h3><span class="link">Upgrade</span></div>
+              <div class="card-h"><h3>My Plan</h3><span class="chip plan">STARTER</span></div>
               <div class="card-b">
-                <span class="chip plan">STARTER</span>
-                <div style="margin-top:10px;">
-                  <div class="plan-feat"><span>CUs / day</span><span class="v">1,000,000</span></div>
-                  <div class="plan-feat"><span>Throughput</span><span class="v">300 CUs/sec</span></div>
-                  <div class="plan-feat"><span>Projects</span><span class="v">1</span></div>
+                <div class="planmeter-top"><span class="l">오늘 사용한 CU</span><span class="r">0 / 1,000,000</span></div>
+                <div class="track lg"><span style="width:0%"></span></div>
+                <div class="plan-quickrow">
+                  <div><span class="qk">Throughput</span><span class="qv">300 CU/s</span></div>
+                  <div><span class="qk">Projects</span><span class="qv">1</span></div>
                 </div>
-                <div class="btn-primary">Upgrade Plan</div>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-h"><h3>Payment Details</h3></div>
-              <div class="card-b">
-                <p style="font-size:12px;color:var(--muted);margin:0 0 12px;">등록된 결제 수단이 없습니다.</p>
-                <div class="btn-secondary">+ Add Payment Method</div>
+                <div class="plan-actions">
+                  <div class="btn-primary">Upgrade Plan</div>
+                  <span class="link-sm">결제 수단 등록 →</span>
+                </div>
               </div>
             </div>
           </div>
@@ -649,21 +676,18 @@
             <div class="card">
               <div class="card-h"><h3>Asset Distribution by Chain</h3></div>
               <div class="card-b pt">
-                <div class="distbar">
-                  <span style="width:42%;background:var(--chain-1);"></span>
-                  <span style="width:18%;background:var(--chain-2);"></span>
-                  <span style="width:15%;background:var(--chain-3);"></span>
-                  <span style="width:12%;background:var(--chain-4);"></span>
-                  <span style="width:8%;background:var(--chain-5);"></span>
-                  <span style="width:5%;background:var(--chain-6);"></span>
-                </div>
-                <div class="distlegend">
-                  <div class="row"><span class="sw" style="background:var(--chain-1);"></span><span class="name">Ethereum</span><span class="pct">42% · $20.2M</span></div>
-                  <div class="row"><span class="sw" style="background:var(--chain-2);"></span><span class="name">Polygon</span><span class="pct">18% · $8.7M</span></div>
-                  <div class="row"><span class="sw" style="background:var(--chain-3);"></span><span class="name">Aptos</span><span class="pct">15% · $7.2M</span></div>
-                  <div class="row"><span class="sw" style="background:var(--chain-4);"></span><span class="name">Arbitrum</span><span class="pct">12% · $5.8M</span></div>
-                  <div class="row"><span class="sw" style="background:var(--chain-5);"></span><span class="name">Base</span><span class="pct">8% · $3.9M</span></div>
-                  <div class="row"><span class="sw" style="background:var(--chain-6);"></span><span class="name">Others</span><span class="pct">5% · $2.4M</span></div>
+                <div class="donutrow">
+                  <div class="donut" style="background:conic-gradient(var(--chain-1) 0% 42%, var(--chain-2) 42% 60%, var(--chain-3) 60% 75%, var(--chain-4) 75% 87%, var(--chain-5) 87% 95%, var(--chain-6) 95% 100%);">
+                    <div class="donut-hole"><span class="dv">$48.2M</span><span class="dl">Total</span></div>
+                  </div>
+                  <div class="distlegend">
+                    <div class="row"><span class="sw" style="background:var(--chain-1);"></span><span class="name">Ethereum</span><span class="pct">42% · $20.2M</span></div>
+                    <div class="row"><span class="sw" style="background:var(--chain-2);"></span><span class="name">Polygon</span><span class="pct">18% · $8.7M</span></div>
+                    <div class="row"><span class="sw" style="background:var(--chain-3);"></span><span class="name">Aptos</span><span class="pct">15% · $7.2M</span></div>
+                    <div class="row"><span class="sw" style="background:var(--chain-4);"></span><span class="name">Arbitrum</span><span class="pct">12% · $5.8M</span></div>
+                    <div class="row"><span class="sw" style="background:var(--chain-5);"></span><span class="name">Base</span><span class="pct">8% · $3.9M</span></div>
+                    <div class="row"><span class="sw" style="background:var(--chain-6);"></span><span class="name">Others</span><span class="pct">5% · $2.4M</span></div>
+                  </div>
                 </div>
               </div>
             </div>
