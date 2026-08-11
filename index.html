@@ -113,9 +113,8 @@
   .chip.warn{background:var(--warn-tint);color:var(--warn);}
   .chip.crit{background:var(--crit-tint);color:var(--crit);}
   .chip .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
-  .track{height:6px;border-radius:99px;background:var(--panel-bg-2);margin-top:11px;position:relative;}
-  .track > span{display:block;height:100%;border-radius:99px;background:var(--accent);position:relative;min-width:6px;}
-  .track > span::after{content:"";position:absolute;top:50%;right:0;width:12px;height:12px;border-radius:50%;background:var(--accent-strong);box-shadow:0 0 0 2.5px var(--page-bg);transform:translate(50%,-50%);}
+  .track{height:8px;border-radius:99px;background:var(--accent-tint);margin-top:11px;position:relative;overflow:hidden;}
+  .track > span{display:block;height:100%;border-radius:99px;background:var(--accent-strong);}
 
   /* Job entry section */
   .jobsection{margin:0 0 26px;}
