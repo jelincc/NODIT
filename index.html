@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Nodit Console</title>
 <meta name="description" content="Nodit Console — Overview 화면 개선 프로토타입">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <style>
   :root{
     --page-bg:#FFFFFF; --panel-bg:#F2F5F3; --panel-bg-2:#E8ECE9; --ink:#131715; --muted:#67766E; --border:#DEE4E0;
@@ -110,8 +113,9 @@
   .chip.warn{background:var(--warn-tint);color:var(--warn);}
   .chip.crit{background:var(--crit-tint);color:var(--crit);}
   .chip .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
-  .track{height:6px;border-radius:99px;background:var(--panel-bg-2);margin-top:11px;overflow:hidden;}
-  .track > span{display:block;height:100%;border-radius:99px;background:var(--blue);}
+  .track{height:6px;border-radius:99px;background:var(--panel-bg-2);margin-top:11px;position:relative;}
+  .track > span{display:block;height:100%;border-radius:99px;background:var(--blue);position:relative;min-width:6px;}
+  .track > span::after{content:"";position:absolute;top:50%;right:0;width:12px;height:12px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 2.5px var(--page-bg);transform:translate(50%,-50%);}
 
   /* Job entry section */
   .jobsection{margin:0 0 26px;}
@@ -123,7 +127,7 @@
     background:var(--page-bg); border:1px solid var(--border); box-shadow:var(--shadow); border-radius:var(--radius-lg); padding:16px;
     cursor:pointer; display:flex; flex-direction:column; gap:12px; transition:border-color .12s,transform .12s,box-shadow .12s;
   }
-  .jobcard:hover{border-color:var(--ink); transform:translateY(-2px); box-shadow:var(--shadow-hover);}
+  .jobcard:hover{border-color:#C7D0CA; transform:translateY(-2px); box-shadow:var(--shadow-hover);}
   .jobcard .icwrap{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none;}
   .jobcard .icwrap .ic{width:17px;height:17px;}
   .jobcard .icwrap.build{background:var(--job-build-tint);color:var(--job-build);}
